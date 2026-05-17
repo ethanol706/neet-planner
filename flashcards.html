@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick Revision Cards — NEET 2027</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Quicksand:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+--bg:#05070f;
+--card:#0b0f1c;
+--card2:#101524;
+--border:#1a2238;
+--text:#e8edf8;
+--muted:#5a6a8a;
+--faint:#1e2840;
+--purple:#a855f7;
+--cyan:#06b6d4;
+--pink:#ec4899;
+--gold:#f59e0b;
+--green:#10b981;
+--orange:#f97316;
+--red:#ef4444;
+}
+*{ margin:0; padding:0; box-sizing:border-box; }
+body{
+background:var(--bg);
+color:var(--text);
+font-family:'Quicksand',sans-serif;
+min-height:100vh;
+overflow-x:hidden;
+}
+.bgc{ position:fixed; inset:0; z-index:0; pointer-events:none; }
+.orb{ position:absolute; border-radius:50%; filter:blur(100px); animation:float 10s ease-in-out infinite alternate; }
+.o1{ width:500px; height:500px; background:rgba(236,72,153,.06); top:-100px; left:-100px; }
+.o2{ width:350px; height:350px; background:rgba(245,158,11,.04); bottom:-80px; right:-80px; animation-delay:3s; }
+.o3{ width:200px; height:200px; background:rgba(168,85,247,.05); top:50%; left:50%; animation-delay:5s; }
+@keyframes float{ from{ transform:translate(0,0) scale(1); } to{ transform:translate(30px,25px) scale(1.12); } }
+.grid{
+position:fixed; inset:0;
+background-image: linear-gradient(rgba(236,72,153,.015) 1px,transparent 1px), linear-gradient(90deg,rgba(236,72,153,.015) 1px,transparent 1px);
+background-size:60px 60px; pointer-events:none;
+}
+
+.page{ max-width:480px; width:100%; margin:0 auto; padding:20px 16px 60px; position:relative; z-index:1; }
+
+/* Header */
+.topbar{
+display:flex; align-items:center; gap:12px; margin-bottom:20px;
+}
+.back{
+width:38px; height:38px; border-radius:12px;
+background:rgba(236,72,153,.08); border:1px solid rgba(236,72,153,.2);
+display:flex; align-items:center; justify-content:center;
+text-decoration:none; font-size:16px; flex-shrink:0;
+transition:transform .15s;
+}
+.back:active{ transform:scale(.92); }
+.page-title{
+font-family:'Nunito',sans-serif; font-size:22px; font-weight:900;
+background:linear-gradient(135deg,#ec4899,#f59e0b);
+-webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.page-sub{ font-size:11px; color:var(--muted); font-weight:600; }
+
+/* Stats bar */
+.statsbar{
+display:flex; gap:10px; margin-bottom:18px;
+}
+.stat{
+flex:1; background:var(--card); border:1px solid var(--border);
+border-radius:14px; padding:10px 12px; text-align:center;
+}
+.stat-n{
+font-family:'Nunito',sans-serif; font-size:20px; font-weight:900; line-height:1;
+}
+.stat-l{ font-size:10px; color:var(--muted); font-weight:700; margin-top:2px; }
+.s1 .stat-n{ color:var(--green); }
+.s2 .stat-n{ color:var(--pink); }
+.s3 .stat-n{ color:var(--gold); }
+
+/* Subject tabs */
+.tabs{
+display:flex; gap:8px; margin-bottom:18px; overflow-x:auto; padding-bottom:2px;
+scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{ display:none; }
+.tab{
+flex-shrink:0; padding:8px 16px; border-radius:10px; font-size:12px;
+font-weight:700; border:1px solid var(--border); background:var(--card);
+color:var(--muted); cursor:pointer; transition:all .2s; white-space:nowrap;
+}
+.tab.active-bio{ background:rgba(16,185,129,.12); border-color:rgba(16,185,129,.3); color:var(--green); }
+.tab.active-chem{ background:rgba(6,182,212,.12); border-color:rgba(6,182,212,.3); color:var(--cyan); }
+.tab.active-phy{ background:rgba(168,85,247,.12); border-color:rgba(168,85,247,.3); color:var(--purple); }
+.tab.active-weak{ background:rgba(239,68,68,.12); border-color:rgba(239,68,68,.3); color:var(--red); }
+
+/* Search */
+.searchbar{
+position:relative; margin-bottom:16px;
+}
+.searchbar input{
+width:100%; background:var(--card); border:1px solid var(--border);
+border-radius:12px; padding:10px 14px 10px 38px;
+color:var(--text); font-family:'Quicksand',sans-serif;
+font-size:13px; font-weight:600; outline:none;
+}
+.searchbar input::placeholder{ color:var(--muted); }
+.searchbar input:focus{ border-color:rgba(236,72,153,.3); }
+.search-icon{ position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:14px; pointer-events:none; }
+
+/* Cards grid */
+.clist{ display:grid; gap:12px; }
+
+/* Flashcard */
+.fc{
+background:var(--card); border:1px solid var(--border);
+border-radius:18px; overflow:hidden; transition:transform .15s;
+}
+.fc:active{ transform:scale(.98); }
+.fc-head{
+padding:14px 16px 0; display:flex; align-items:flex-start; justify-content:space-between; gap:8px;
+}
+.fc-meta{ display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+.fc-num{
+font-family:'Space Mono',monospace; font-size:9px;
+color:var(--muted); letter-spacing:.06em;
+}
+.fc-subj{
+font-size:9px; font-weight:700; padding:2px 8px; border-radius:6px;
+}
+.subj-bio{ background:rgba(16,185,129,.1); color:var(--green); }
+.subj-chem{ background:rgba(6,182,212,.1); color:var(--cyan); }
+.subj-phy{ background:rgba(168,85,247,.1); color:var(--purple); }
+
+.fc-actions{ display:flex; align-items:center; gap:6px; flex-shrink:0; }
+.flag-btn{
+background:none; border:none; cursor:pointer;
+font-size:16px; padding:2px; line-height:1;
+transition:transform .15s;
+}
+.flag-btn:active{ transform:scale(.85); }
+.toggle-btn{
+background:none; border:none; cursor:pointer;
+font-size:12px; color:var(--muted); font-weight:700;
+font-family:'Space Mono',monospace; letter-spacing:.04em;
+transition:color .15s; padding:2px;
+}
+.toggle-btn:hover{ color:var(--text); }
+
+.fc-title{
+font-family:'Nunito',sans-serif; font-size:15px; font-weight:900;
+color:var(--text); padding:6px 16px 0; line-height:1.3;
+}
+.fc-body{
+padding:10px 16px 14px;
+max-height:0; overflow:hidden;
+transition:max-height .35s ease, padding .35s ease;
+}
+.fc-body.open{
+max-height:600px;
+padding:10px 16px 14px;
+}
+.fc-divider{
+height:1px; background:var(--border); margin:0 16px 0;
+transition:margin .35s;
+}
+.fc-points{
+list-style:none; display:flex; flex-direction:column; gap:6px;
+}
+.fc-points li{
+font-size:12px; font-weight:600; color:rgba(232,237,248,.85);
+line-height:1.5; padding-left:14px; position:relative;
+}
+.fc-points li::before{
+content:'•'; position:absolute; left:0;
+font-size:14px; line-height:1.3;
+}
+.bio-dot li::before{ color:var(--green); }
+.chem-dot li::before{ color:var(--cyan); }
+.phy-dot li::before{ color:var(--purple); }
+
+.fc-formula{
+font-family:'Space Mono',monospace; font-size:11px;
+background:rgba(168,85,247,.06); border:1px solid rgba(168,85,247,.15);
+border-radius:8px; padding:8px 10px; margin-top:8px;
+color:rgba(232,237,248,.7); line-height:1.7;
+}
+
+/* Flagged style */
+.fc.flagged{ border-color:rgba(239,68,68,.3); }
+.fc.flagged .fc-head{ background:rgba(239,68,68,.04); }
+
+/* Empty state */
+.empty{
+text-align:center; padding:40px 20px; color:var(--muted);
+font-size:14px; font-weight:600;
+}
+.empty span{ display:block; font-size:32px; margin-bottom:10px; }
+</style>
+</head>
+<body>
+
+<div class="bgc">
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+<div class="grid"></div>
+</div>
+
+<div class="page">
+
+<!-- Header -->
+<div class="topbar">
+<a href="index.html" class="back">←</a>
+<div>
+<div class="page-title">🃏 Revision Cards</div>
+<div class="page-sub">Tap a card to expand · Flag weak chapters</div>
+</div>
+</div>
+
+<!-- Stats -->
+<div class="statsbar">
+<div class="stat s1">
+<div class="stat-n" id="totalCards">97</div>
+<div class="stat-l">TOTAL</div>
+</div>
+<div class="stat s2">
+<div class="stat-n" id="weakCount">0</div>
+<div class="stat-l">FLAGGED</div>
+</div>
+<div class="stat s3">
+<div class="stat-n" id="openCount">0</div>
+<div class="stat-l">OPENED</div>
+</div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+<div class="tab active-bio" data-tab="bio" onclick="setTab('bio')">🧬 Biology (38)</div>
+<div class="tab" data-tab="chem" onclick="setTab('chem')">⚗️ Chemistry (30)</div>
+<div class="tab" data-tab="phy" onclick="setTab('phy')">⚡ Physics (29)</div>
+<div class="tab" data-tab="weak" onclick="setTab('weak')">🔴 Flagged</div>
+</div>
+
+<!-- Search -->
+<div class="searchbar">
+<span class="search-icon">🔍</span>
+<input type="text" id="searchInput" placeholder="Search chapter..." oninput="renderCards()">
+</div>
+
+<!-- Card list -->
+<div class="clist" id="clist"></div>
+<div class="empty" id="emptyState" style="display:none">
+<span>🔍</span>No cards found
+</div>
+
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+
+const chapters = [
+
+// ═══ BIOLOGY ═══
+{id:'b1', subj:'bio', title:'The Living World',
+points:[
+'Living organisms share features: growth, reproduction, metabolism, cellular organisation, response to stimuli, homeostasis',
+'Taxonomy: Identification → Nomenclature → Classification',
+'Binomial nomenclature: Genus + species (italicised); proposed by Carolus Linnaeus',
+'Taxon hierarchy: Kingdom > Phylum > Class > Order > Family > Genus > Species',
+'ICBN (plants), ICZN (animals) govern nomenclature rules',
+'Herbarium = dried, preserved plant specimens; type specimen of a species stored here',
+'Botanical gardens (Kew, London; Indian Botanical Garden, Howrah) maintain living collections',
+'Biodiversity = variety of life; India has 2 biodiversity hotspots'
+]},
+{id:'b2', subj:'bio', title:'Biological Classification',
+points:[
+'Five kingdom system by R.H. Whittaker (1969): Monera, Protista, Fungi, Plantae, Animalia',
+'Two kingdom (Linnaeus): Plantae + Animalia — did not include bacteria, fungi, algae properly',
+'Monera: prokaryotes, no nuclear membrane, peptidoglycan cell wall in bacteria',
+'Protista: unicellular eukaryotes; includes Chrysophytes, Dinoflagellates, Euglenoids, Slime moulds, Protozoans',
+'Fungi: heterotrophic, chitin cell wall; reproduce by spores; Ascomycetes, Basidiomycetes, Phycomycetes, Deuteromycetes',
+'Viruses: non-cellular, obligate intracellular parasites; DNA or RNA, never both; TMV = first virus crystallised (Stanley)',
+'Viroids: smaller than viruses, single-stranded RNA, no protein coat — cause potato spindle tuber disease',
+'Lichens = symbiosis of algae (phycobiont) + fungi (mycobiont); pioneers in ecological succession'
+]},
+{id:'b3', subj:'bio', title:'Plant Kingdom',
+points:[
+'Algae: thallophytes, autotrophic, aquatic; Chlorophyta (Chlamydomonas), Phaeophyta (Fucus), Rhodophyta (Porphyra)',
+'Bryophyta: amphibians of plant kingdom; no vascular tissue; gametophyte dominant; Riccia, Funaria, Marchantia',
+'Pteridophyta: first vascular plants; sporophyte dominant; ferns, Selaginella, Equisetum',
+'Gymnosperms: naked seeds; no fruit; heterosporous; Cycas, Pinus, Gnetum',
+'Angiosperms: enclosed seeds in fruit; largest plant group; monocots vs dicots',
+'Alternation of generations: sporophyte (2n) ↔ gametophyte (n)',
+'PAN = Pteridophyta → Angiosperms: sporophyte increasingly dominant',
+'Double fertilisation unique to angiosperms'
+]},
+{id:'b4', subj:'bio', title:'Animal Kingdom',
+points:[
+'Basis of classification: levels of organisation, symmetry, coelom, segmentation, notochord',
+'Porifera: cellular level, canal system, choanocytes, spicules (CaCO₃ or silica)',
+'Coelenterata: tissue level, cnidoblasts, polyp & medusa forms, radial symmetry',
+'Platyhelminthes: acoelomate, bilateral symmetry, flame cells for excretion; Taenia, Fasciola',
+'Aschelminthes: pseudocoelomate, complete digestive system; Ascaris, Wuchereria',
+'Annelida: true coelom, metamerism, closed circulatory system; Nereis, Earthworm, Leech',
+'Arthropoda: largest phylum, jointed appendages, open circulatory system, malpighian tubules',
+'Chordata: notochord, dorsal hollow nerve cord, pharyngeal gill slits, post-anal tail'
+]},
+{id:'b5', subj:'bio', title:'Morphology of Flowering Plants',
+points:[
+'Root: tap (dicots) vs fibrous (monocots); functions: absorption, anchorage, storage, nitrogen fixation',
+'Stem: nodes + internodes; functions: photosynthesis (green), storage, vegetative propagation',
+'Leaf: simple vs compound; parts: leaf base, petiole, lamina; venation: reticulate (dicot), parallel (monocot)',
+'Inflorescence: racemose (indefinite: Mustard) vs cymose (definite: Jasmine)',
+'Flower: complete/incomplete; bisexual/unisexual; parts: calyx, corolla, androecium, gynoecium',
+'Aestivation: valvate, twisted, imbricate, vexillary (papilionaceous)',
+'Placentation: marginal, axile, parietal, basal, free central, superficial',
+'Fruit = ripened ovary; seed = ripened ovule; dispersal: wind, water, animals, explosion'
+]},
+{id:'b6', subj:'bio', title:'Anatomy of Flowering Plants',
+points:[
+'Meristematic tissue: undifferentiated, actively dividing; apical, lateral (cambium), intercalary',
+'Permanent tissue: simple (parenchyma, collenchyma, sclerenchyma) & complex (xylem, phloem)',
+'Xylem: tracheids + vessels (water conduction) + xylem fibres + xylem parenchyma',
+'Phloem: sieve tubes + companion cells + phloem fibres + phloem parenchyma',
+'Dicot root: polyarch xylem in cortex; Monocot root: polyarch xylem bundles',
+'Dicot stem: conjoint, collateral, open vascular bundles in ring; endarch protoxylem',
+'Monocot stem: scattered vascular bundles; no cambium; ground tissue undifferentiated',
+'Secondary growth: vascular cambium produces secondary xylem (wood) + secondary phloem'
+]},
+{id:'b7', subj:'bio', title:'Structural Organisation in Animals',
+points:[
+'Epithelial tissue: covers body surfaces; squamous, cuboidal, columnar, ciliated, glandular',
+'Connective tissue: loose (areolar), dense (tendon, ligament), specialised (bone, blood, cartilage)',
+'Muscle tissue: skeletal (striated, voluntary), smooth (unstriated, involuntary), cardiac (striated, involuntary)',
+'Neural tissue: neurons + neuroglia; neuron = dendrites + cyton + axon',
+'Cockroach: segmented body; open circulatory system; malpighian tubules (excretion)',
+'Earthworm: setae for locomotion; typhlosole increases absorption area; hermaphrodite',
+'Frog: buccal breathing, cutaneous respiration; three-chambered heart; 10 pairs cranial nerves'
+]},
+{id:'b8', subj:'bio', title:'Cell: The Unit of Life',
+points:[
+'Cell theory: Schleiden + Schwann (1838-39); all living things made of cells (Virchow: cells from cells)',
+'Prokaryotes: no membrane-bound organelles; 70S ribosomes; DNA naked in nucleoid',
+'Eukaryotes: membrane-bound organelles; 80S ribosomes (70S in mitochondria/chloroplast)',
+'Plasma membrane: fluid mosaic model (Singer & Nicolson); selective permeability',
+'Nucleus: nuclear envelope (double membrane with pores), nucleolus (rRNA synthesis), chromatin',
+'Mitochondria: double membrane; inner membrane = cristae; matrix has own DNA + ribosomes; ATP synthesis',
+'Chloroplast: double membrane; thylakoids stacked = grana; stroma has enzymes for dark reaction',
+'Lysosomes: "suicide bags" (De Duve); contain hydrolytic enzymes; pH ~5'
+]},
+{id:'b9', subj:'bio', title:'Biomolecules',
+points:[
+'Carbohydrates: C:H:O = 1:2:1; monosaccharides (glucose, fructose), disaccharides (sucrose, maltose), polysaccharides (starch, cellulose, glycogen)',
+'Proteins: polymers of amino acids; 20 amino acids; peptide bond (-CO-NH-); primary, secondary, tertiary, quaternary structure',
+'Enzymes: biological catalysts (protein); active site; substrate specificity; affected by pH, temp, inhibitors',
+'Km (Michaelis constant): substrate conc. at half Vmax; low Km = high affinity',
+'Nucleic acids: DNA (deoxyribose, A-T-G-C, double helix) & RNA (ribose, A-U-G-C)',
+'Lipids: not polymers; glycerol + fatty acids; saturated vs unsaturated; phospholipids in membrane',
+'DNA double helix: Watson & Crick (1953); antiparallel strands; A=T (2 H-bonds), G≡C (3 H-bonds)',
+'Enzyme inhibition: competitive (similar structure to substrate) vs non-competitive (different site)'
+]},
+{id:'b10', subj:'bio', title:'Cell Cycle and Cell Division',
+points:[
+'Cell cycle: Interphase (G1 + S + G2) + M phase (mitosis + cytokinesis)',
+'G1: cell growth, protein synthesis; S: DNA replication; G2: preparation for division',
+'Mitosis: PMAT — equational division; 2n → 2n; for growth and repair',
+'Prophase: chromatin condenses, spindle forms; nuclear envelope dissolves',
+'Metaphase: chromosomes at metaphase plate; centromeres attach to spindle fibres — best for karyotyping',
+'Anaphase: centromeres split; chromatids move to poles',
+'Telophase: nuclear envelopes reform; chromosomes decondense',
+'Meiosis: reductional division; 2n → n; crossing over in prophase I produces genetic variation'
+]},
+{id:'b11', subj:'bio', title:'Transport in Plants',
+points:[
+'Water potential (Ψw) = solute potential (Ψs) + pressure potential (Ψp)',
+'Osmosis: movement of water from higher Ψw to lower Ψw across semi-permeable membrane',
+'Plasmolysis: loss of water from cell when placed in hypertonic solution; cell shrinks',
+'Apoplast pathway: cell wall & intercellular spaces (passive); symplast: cytoplasm via plasmodesmata',
+'Transpiration: loss of water as vapour; stomatal (major), cuticular, lenticular',
+'Translocation in phloem: pressure flow hypothesis (Munch); source → sink via sieve tubes',
+'Active transport: against conc. gradient; needs ATP; carrier proteins; e.g., mineral ion uptake',
+'Root pressure: positive hydrostatic pressure in xylem due to active ion absorption'
+]},
+{id:'b12', subj:'bio', title:'Mineral Nutrition',
+points:[
+'Macronutrients (>1 mmol/L): C, H, O, N, P, K, Ca, Mg, S — 9 elements',
+'Micronutrients (<1 mmol/L): Fe, Mn, Cu, Zn, Mo, B, Cl, Ni — 8 elements',
+'Nitrogen fixation: N₂ → NH₃; by Rhizobium (symbiotic) & Azotobacter, Cyanobacteria (free-living)',
+'Nif genes code for nitrogenase enzyme; requires anaerobic conditions (leghemoglobin in root nodules)',
+'Nitrification: NH₃ → NO₂⁻ (Nitrosomonas) → NO₃⁻ (Nitrobacter)',
+'Denitrification: NO₃⁻ → N₂ by Pseudomonas, Thiobacillus',
+'Deficiency symptoms: N = chlorosis (yellowing); Fe = interveinal chlorosis; Ca = death of meristems',
+'Hydroponics: growing plants in nutrient solution without soil — studies mineral requirements'
+]},
+{id:'b13', subj:'bio', title:'Photosynthesis in Higher Plants',
+points:[
+'Light reactions (thylakoid): water splitting, ATP synthesis, NADPH production; PS I + PS II',
+'PS II (P680): absorbs 680 nm; water oxidation (photolysis): 2H₂O → 4H⁺ + 4e⁻ + O₂',
+'PS I (P700): absorbs 700 nm; reduces NADP⁺ to NADPH via ferredoxin',
+'Calvin cycle (C3): 3CO₂ + 3RuBP → 6 3-PGA → 6 G3P → glucose; needs 9 ATP + 6 NADPH per 3CO₂',
+'C4 plants: Hatch-Slack pathway; primary CO₂ acceptor = PEP; OAA formed in mesophyll; CO₂ released in bundle sheath',
+'C4 advantages: no photorespiration; efficient in hot, dry conditions; Maize, Sugarcane, Sorghum',
+'CAM plants: stomata open at night; CO₂ stored as organic acids; Cacti, Agave',
+'Photorespiration: RuBisCO fixes O₂ not CO₂; occurs in C3 plants; wastes energy; absent in C4'
+]},
+{id:'b14', subj:'bio', title:'Respiration in Plants',
+points:[
+'Glycolysis (cytoplasm): glucose → 2 pyruvate; net 2 ATP + 2 NADH; 10 steps; Embden-Meyerhof-Parnas pathway',
+'Aerobic respiration: glycolysis + Krebs cycle + ETC; total 36-38 ATP per glucose',
+'Krebs cycle (mitochondrial matrix): 2 acetyl-CoA → 4CO₂ + 6NADH + 2FADH₂ + 2ATP (per glucose)',
+'ETC (inner mitochondrial membrane): NADH = 3 ATP, FADH₂ = 2 ATP; O₂ = final electron acceptor',
+'Fermentation: anaerobic; yeast → ethanol + CO₂; muscle → lactic acid; net 2 ATP only',
+'RQ (respiratory quotient) = CO₂ evolved / O₂ consumed; carbs = 1, fats < 1, proteins ≈ 0.9',
+'Amphibolic pathway: glycolysis intermediates used for synthesis (anabolic) and breakdown (catabolic)',
+'Substrate level phosphorylation: ATP formed directly (glycolysis, Krebs); vs oxidative phosphorylation (ETC)'
+]},
+{id:'b15', subj:'bio', title:'Plant Growth and Development',
+points:[
+'Growth: irreversible increase in dry weight; meristematic (cell division) → elongation → maturation',
+'Sigmoid growth curve: lag → log → stationary → senescent phase',
+'Auxin (IAA): apical dominance, cell elongation, root initiation; made in apical meristem',
+'Gibberellins (GA): stem elongation, seed germination, breaks dormancy, fruit development',
+'Cytokinins: cell division, delay senescence, promotes lateral bud growth',
+'Abscisic acid (ABA): stress hormone, promotes dormancy, closes stomata — "stress hormone"',
+'Ethylene: fruit ripening, abscission, promotes root elongation at low conc.',
+'Photoperiodism: SDP (long night plants: Chrysanthemum), LDP (short night plants: wheat), Day-neutral'
+]},
+{id:'b16', subj:'bio', title:'Digestion and Absorption',
+points:[
+'GI tract: mouth → oesophagus → stomach → small intestine (duodenum, jejunum, ileum) → large intestine',
+'Saliva: salivary amylase (ptyalin) digests starch → maltose; pH 6.8; also contains lysozyme',
+'Stomach: gastric juice = HCl + pepsinogen + renin (infants); pH 2; churning = chyme',
+'Pancreatic juice: trypsin, chymotrypsin (proteases), lipase, pancreatic amylase, DNase, RNase',
+'Bile (liver): emulsifies fats; no enzymes; bile salts break fat globules',
+'Intestinal enzymes (brush border): maltase, sucrase, lactase, peptidases, lipase',
+'Absorption: monosaccharides + amino acids → portal blood; fatty acids + glycerol → lacteals (lymph)',
+'Liver functions: glycogen storage, bile production, detoxification, plasma protein synthesis, urea formation'
+]},
+{id:'b17', subj:'bio', title:'Breathing and Exchange of Gases',
+points:[
+'Lungs: ~700 million alveoli; total surface area ≈ 80 m²; type I cells (gas exchange), type II cells (surfactant)',
+'Tidal volume (TV): 500 mL; IRV: 2500 mL; ERV: 1000 mL; RV: 1100 mL',
+'Vital capacity = TV + IRV + ERV = 3500–4500 mL; TLC = VC + RV ≈ 5700 mL',
+'Partial pressure: pO₂ alveoli = 104 mmHg, blood = 40 mmHg → O₂ diffuses into blood',
+'pCO₂ blood = 45 mmHg, alveoli = 40 mmHg → CO₂ diffuses out',
+'Haemoglobin: 4 subunits; O₂ binding is cooperative; oxyHb = bright red; deoxyHb = dark red',
+'CO₂ transport: 70% as HCO₃⁻ (bicarbonate); 20-23% with Hb as carbaminoHb; 7% dissolved',
+'Bohr effect: ↑CO₂/↑H⁺/↑temp → ↓Hb affinity for O₂ → more O₂ released to tissues'
+]},
+{id:'b18', subj:'bio', title:'Body Fluids and Circulation',
+points:[
+'Blood: plasma (55%) + formed elements (45%); plasma = 90% water, proteins, ions, nutrients',
+'RBC: 5 million/mm³; lifespan 120 days; no nucleus; Hb carries O₂',
+'WBC: 6000-8000/mm³; neutrophils (60-65%), lymphocytes (20-25%), monocytes (6-8%), eosinophils (2-3%), basophils (0.5-1%)',
+'Blood groups: ABO (A, B, AB, O) based on surface antigens; Rh factor (85% positive)',
+'Heart: 4 chambers; SAN = pacemaker (70 beats/min); 0.8 sec cardiac cycle',
+'Cardiac output = heart rate × stroke volume = 70 × 70 mL ≈ 5 L/min',
+'Blood pressure: systolic/diastolic; normal = 120/80 mmHg; measured by sphygmomanometer',
+'Lymph: similar to plasma but no RBCs, less proteins; returns tissue fluid to circulation'
+]},
+{id:'b19', subj:'bio', title:'Excretory Products and their Elimination',
+points:[
+'Ammonotelism (aquatic): NH₃; Ureotelism (terrestrial mammals): urea (liver — ornithine cycle); Uricotelism (birds, reptiles): uric acid',
+'Nephron: Bowman\'s capsule + PCT + Loop of Henle + DCT + collecting duct',
+'GFR: 125 mL/min; 180 L filtrate/day; 99% reabsorbed → 1.5 L urine/day',
+'PCT: reabsorbs glucose, amino acids, 70% water, Na⁺; secretes H⁺, NH₃, drugs',
+'Loop of Henle: countercurrent mechanism; descending = permeable to water; ascending = permeable to salt',
+'DCT + collecting duct: regulated by ADH (water) and aldosterone (Na⁺ reabsorption)',
+'Juxtaglomerular apparatus: JG cells + macula densa; secretes renin → RAAS → aldosterone',
+'Haemodialysis: used in renal failure; blood filtered through dialysing machine (artificial kidney)'
+]},
+{id:'b20', subj:'bio', title:'Locomotion and Movement',
+points:[
+'Types of movement: amoeboid (pseudopodia), ciliary (trachea, oviduct), muscular (locomotion)',
+'Skeletal muscle: actin (thin) + myosin (thick) filaments; Z line – A band – I band – H zone – M line',
+'Sliding filament theory (Huxley): actin slides over myosin; sarcomere shortens; A band unchanged',
+'Cross-bridge cycle: myosin head binds actin → power stroke → ADP released → ATP binds → detachment',
+'Ca²⁺ (from SR) binds troponin → tropomyosin moves → exposes actin active sites for myosin',
+'Red (slow-twitch, oxidative, fatigue-resistant) vs White (fast-twitch, glycolytic, fatigues quickly)',
+'Axial skeleton: skull (22 bones) + vertebral column (26) + ribs (12 pairs) + sternum',
+'Appendicular: pectoral girdle + upper limbs + pelvic girdle + lower limbs; total 126 bones'
+]},
+{id:'b21', subj:'bio', title:'Neural Control and Coordination',
+points:[
+'Neuron: dendrite → cell body (cyton) → axon → axon terminals; myelinated vs unmyelinated',
+'Resting membrane potential: -70 mV; more K⁺ inside, more Na⁺ outside; Na⁺/K⁺ pump',
+'Action potential: depolarisation (Na⁺ rush in) → repolarisation (K⁺ rush out) → refractory period',
+'Synapse: electrical or chemical; neurotransmitter (Ach, dopamine, serotonin) released from pre-synaptic vesicles',
+'Brain: forebrain (cerebrum, thalamus, hypothalamus) + midbrain + hindbrain (pons, medulla, cerebellum)',
+'Cerebrum: 4 lobes; frontal (voluntary movement), parietal (sensory), temporal (hearing/memory), occipital (vision)',
+'Spinal cord: reflex arc centre; 31 pairs of spinal nerves; 12 pairs cranial nerves from brain',
+'EEG measures brain electrical activity; alpha (relaxed), beta (active), theta, delta (deep sleep) waves'
+]},
+{id:'b22', subj:'bio', title:'Chemical Coordination and Integration',
+points:[
+'Endocrine glands: ductless; secrete hormones directly into blood',
+'Hypothalamus: master regulator; controls pituitary via releasing/inhibiting hormones',
+'Anterior pituitary: GH, TSH, ACTH, FSH, LH, Prolactin; Posterior: ADH (vasopressin), Oxytocin',
+'Thyroid: T₃ + T₄ (thyroxine) regulate BMR; calcitonin lowers blood Ca²⁺; requires iodine',
+'Parathyroid: PTH raises blood Ca²⁺ (mobilises from bone, increases renal reabsorption)',
+'Adrenal cortex: glucocorticoids (cortisol — stress), mineralocorticoids (aldosterone — Na⁺ retention)',
+'Adrenal medulla: adrenaline + noradrenaline — fight or flight response; epinephrine',
+'Pancreas: α cells (glucagon — raises blood glucose), β cells (insulin — lowers blood glucose), δ cells (somatostatin)'
+]},
+{id:'b23', subj:'bio', title:'Reproduction in Organisms',
+points:[
+'Asexual: single parent; vegetative propagation, budding (Hydra), binary fission (Amoeba), fragmentation, sporulation',
+'Sexual: two parents (or one bisexual); involves gamete formation and fertilisation',
+'Juvenile phase → reproductive phase → senescent phase in all organisms',
+'Oestrus cycle (non-primates): cyclical changes; fertile only during oestrus; e.g., cow, dog',
+'Menstrual cycle (primates): 28 days; menstruation (1-5), proliferative (6-13), secretory (15-28)',
+'Fertilisation: external (aquatic animals, most plants) vs internal (terrestrial vertebrates, plants)',
+'Parthenogenesis: egg develops without fertilisation; e.g., honey bee (drones are haploid)',
+'Vegetative propagules: rhizome (ginger), bulb (onion), stolon (strawberry), tuber (potato)'
+]},
+{id:'b24', subj:'bio', title:'Sexual Reproduction in Flowering Plants',
+points:[
+'Stamen: anther (2 lobes, 4 microsporangia) + filament; microsporangium → pollen grains (male gametophyte)',
+'Pollen: 2-layered; exine (sporopollenin — most durable biological material) + intine (cellulose + pectin)',
+'Pistil: stigma + style + ovary; ovule = megasporangium; nucellus + integuments + micropyle + chalaza',
+'Megasporogenesis: diploid MMC → meiosis → 4 megaspores; 3 degenerate; 1 functional',
+'Female gametophyte (embryo sac): 7-celled, 8-nucleate; Polygonum type; egg + 2 synergids + 2 polar nuclei + 3 antipodals',
+'Pollination: self (autogamy, geitonogamy) vs cross (xenogamy); agents: wind (anemophily), insects (entomophily), water (hydrophily)',
+'Double fertilisation: 1 sperm + egg → zygote (2n); 1 sperm + 2 polar nuclei → primary endosperm nucleus (3n)',
+'Endosperm: nutrition for developing embryo; nuclear endosperm (coconut water) vs cellular'
+]},
+{id:'b25', subj:'bio', title:'Human Reproduction',
+points:[
+'Male: testes in scrotum (2°C below body temp); seminiferous tubules (spermatogenesis); Leydig cells (testosterone)',
+'Spermatogenesis: spermatogonia → primary spermatocyte → secondary spermatocyte → spermatids → spermatozoa (spermiogenesis)',
+'Sperm: head (acrosome + nucleus) + middle piece (mitochondria = energy) + tail (motility)',
+'Female: ovaries → oviducts → uterus → vagina; monthly ovulation of 1 secondary oocyte',
+'Oogenesis: primary oocyte (arrested in prophase I) → stimulated at puberty → secondary oocyte (arrested at metaphase II) → fertilisation completes meiosis II',
+'Fertilisation: in fallopian tube; acrosomal reaction; cortical reaction prevents polyspermy; zygote forms',
+'Implantation: blastocyst implants in uterine wall (6-7 days after fertilisation)',
+'HCG (human chorionic gonadotropin): secreted by trophoblast; maintains corpus luteum; basis of pregnancy test'
+]},
+{id:'b26', subj:'bio', title:'Reproductive Health',
+points:[
+'Reproductive health: total well-being in all aspects of reproduction; WHO definition',
+'Contraception: barrier (condom, diaphragm), chemical (spermicides), IUDs (CuT — spermicidal, LNG-20 — hormonal)',
+'Oral contraceptive pills: estrogen + progesterone; prevent ovulation; taken for 21 days',
+'Emergency contraception: within 72 hrs of unprotected sex; high dose hormones',
+'MTP (medical termination of pregnancy): legal in India up to 20 weeks; reduces maternal mortality',
+'STDs: chlamydia (bacterial), gonorrhoea, syphilis, genital herpes, HIV/AIDS, hepatitis B, HPV',
+'Infertility treatments: IVF (test tube baby — Steptoe & Edwards), ZIFT, GIFT, IUI, ICSI',
+'ZIFT: zygote intrafallopian transfer; GIFT: gamete intrafallopian transfer'
+]},
+{id:'b27', subj:'bio', title:'Principles of Inheritance and Variation',
+points:[
+'Mendel\'s laws: 1. Law of Dominance 2. Law of Segregation (Law of purity of gametes) 3. Law of Independent Assortment',
+'Monohybrid: Tt × Tt → 3T_:1tt (phenotypic); 1TT:2Tt:1tt (genotypic) = 3:1',
+'Dihybrid: 9:3:3:1 for 2 independent genes; proves independent assortment',
+'Incomplete dominance: intermediate phenotype; e.g., Mirabilis jalapa (pink in Rr)',
+'Codominance: both alleles expressed; ABO blood group (Iᴬ and Iᴮ codominant)',
+'Linkage: genes on same chromosome tend to be inherited together; Morgan\'s work with Drosophila',
+'Sex determination: XX-XY (humans, Drosophila); ZW-ZZ (birds, moths — female = ZW)',
+'Chromosomal disorders: Down\'s syndrome (trisomy 21), Turner\'s (45,X0), Klinefelter\'s (47,XXY)'
+]},
+{id:'b28', subj:'bio', title:'Molecular Basis of Inheritance',
+points:[
+'Griffith\'s experiment (1928): transformation; R-strain + heat-killed S → virulent; transforming principle',
+'Avery, MacLeod, McCarty (1944): transforming principle = DNA (not protein)',
+'Hershey & Chase (1952): radioactive S³⁵ (protein) vs P³² (DNA) — DNA is genetic material',
+'DNA structure: Watson & Crick (1953); double helix; antiparallel; B-form in cells; major + minor grooves',
+'Replication: semi-conservative (Meselson & Stahl, 1958); origin of replication; DNA pol III (prokaryotes)',
+'Transcription: DNA → mRNA; template strand = antisense; non-template = sense; RNA pol does not need primer',
+'Translation: mRNA → protein; ribosome = rRNA + proteins; tRNA = adapter molecule; AUG = start, UAA/UAG/UGA = stop',
+'Central dogma (Crick): DNA → RNA → Protein; retroviruses: RNA → DNA (reverse transcriptase)'
+]},
+{id:'b29', subj:'bio', title:'Evolution',
+points:[
+'Origin of life: Miller-Urey experiment (1953) — amino acids from inorganic compounds + electrical discharge',
+'Oparin-Haldane hypothesis: hot dilute soup of organic molecules in primitive ocean',
+'Darwin\'s natural selection: variation → struggle for existence → survival of fittest → differential reproduction',
+'Lamarck: inheritance of acquired characteristics (incorrect); but contribution = organisms change over time',
+'Evidences: fossil record, comparative anatomy (homologous vs analogous organs), embryology, molecular',
+'Hardy-Weinberg principle: allele frequencies remain constant in a large, randomly mating population with no evolution',
+'Deviations from H-W: genetic drift, gene flow, mutation, natural selection, non-random mating',
+'Human evolution: Dryopithecus → Ramapithecus → Australopithecus → Homo habilis → H. erectus → H. sapiens neanderthalensis → H. sapiens sapiens'
+]},
+{id:'b30', subj:'bio', title:'Human Health and Disease',
+points:[
+'Innate immunity: non-specific; physical barriers (skin), cellular (phagocytes), physiological (fever)',
+'Acquired immunity: antigen-specific; B cells (humoral — antibodies) + T cells (cell-mediated)',
+'Antibody structure: 4 chains (2H + 2L); Y-shaped; 5 types: IgG, IgA, IgM, IgE, IgD',
+'Vaccines: antigenic proteins/weakened pathogens; induce immunological memory',
+'Malaria: Plasmodium vivax, P. falciparum (most fatal); vector = female Anopheles mosquito; sporozoites infect liver',
+'AIDS: HIV (retrovirus); attacks T-helper cells (CD4⁺); transmitted via blood, sexual contact, mother-to-child',
+'Cancer: uncontrolled cell division; oncogenes vs tumour suppressor genes; carcinogens (mutagens)',
+'Drugs of abuse: opioids (morphine, heroin — bind opioid receptors), cannabinoids (THC — brain receptors), cocaine (blocks dopamine reuptake)'
+]},
+{id:'b31', subj:'bio', title:'Strategies for Enhancement in Food Production',
+points:[
+'Plant breeding: hybridisation (cross-pollination), selection, mutation breeding, polyploidy induction',
+'Green Revolution: Norman Borlaug; semi-dwarf, high-yielding, disease-resistant wheat varieties',
+'Tissue culture: totipotency; explant → callus (undifferentiated) → somatic embryo/shoot → plant',
+'Somaclonal variation: variation among plants grown in tissue culture',
+'Biofortification: breeding crops for higher nutrient content; e.g., IARI golden rice (Vitamin A), Maize (high lysine)',
+'SCP (single cell protein): Spirulina, Chlorella grown as protein source; sustainable protein',
+'Animal breeding: inbreeding (↑homozygosity, inbreeding depression) vs outbreeding (↑heterozygosity, hybrid vigour)',
+'MOET (multiple ovulation embryo transfer): hormone-induced superovulation; embryo transfer in surrogates'
+]},
+{id:'b32', subj:'bio', title:'Microbes in Human Welfare',
+points:[
+'Fermented foods: Lactobacillus in curd; yeast (Saccharomyces) in bread, beer, wine',
+'Antibiotics: Penicillin (Fleming, 1928; Penicillium); Streptomycin (Streptomyces); Chloramphenicol',
+'Biogas: anaerobic fermentation; 65-70% CH₄; biogas plant = digester + gas tank + slurry',
+'Sewage treatment: primary (physical — sedimentation) + secondary (biological — BOD reduction by microbes)',
+'BOD: biological oxygen demand; measure of organic pollutants; ↑BOD = ↑pollution',
+'Biocontrol: Bacillus thuringiensis (Bt) kills caterpillars; Trichoderma (biocontrol of fungal diseases)',
+'Biofertilisers: Rhizobium (legumes), Azotobacter, blue-green algae (Anabaena), mycorrhiza',
+'Mycorrhiza: fungal association with plant roots; increases phosphorus absorption'
+]},
+{id:'b33', subj:'bio', title:'Biotechnology: Principles and Processes',
+points:[
+'Biotechnology: use of living organisms for products/processes; rDNA technology = genetic engineering',
+'Restriction enzymes (restriction endonucleases): cut DNA at specific palindromic sequences; produce sticky ends',
+'EcoRI: G↓AATTC; BamHI: G↓GATCC; HindIII: A↓AGCTT — recognition sites are palindromic',
+'Vectors: plasmid (pBR322: ori + amp^R + tet^R + cloning sites), bacteriophage, cosmid, BAC, YAC',
+'PCR: Polymerase Chain Reaction; denaturation (94°C) → annealing (54°C) → extension (72°C); Taq polymerase',
+'Gel electrophoresis: DNA separated by size; smaller fragments move faster toward anode (+ pole)',
+'Transformation: introduction of recombinant DNA into host (E. coli via CaCl₂ heat shock or electroporation)',
+'Blotting: Southern (DNA), Northern (RNA), Western (protein); probe hybridisation for detection'
+]},
+{id:'b34', subj:'bio', title:'Biotechnology and its Applications',
+points:[
+'Insulin: human insulin (humulin) produced by E. coli; A + B chains expressed separately, combined in vitro',
+'Bt cotton: Bacillus thuringiensis Cry proteins (endotoxins) inserted into cotton; kills bollworm',
+'Golden rice: β-carotene (Vitamin A precursor) producing rice; genes from daffodil + Erwinia',
+'Gene therapy: replacing defective gene; ADA deficiency (adenosine deaminase) — first clinical gene therapy',
+'ELISA: enzyme-linked immunosorbent assay; antigen-antibody reaction; detects HIV, hepatitis',
+'RNAi (RNA interference): double-stranded RNA silences complementary mRNA; used to control Meloidogyne nematode',
+'Transgenic animals: foreign gene inserted; Rosie the cow (human α-lactalbumin in milk)',
+'Biopiracy: patenting traditional biological knowledge without compensation to indigenous people'
+]},
+{id:'b35', subj:'bio', title:'Organisms and Populations',
+points:[
+'Ecology: study of interactions between organisms and environment; levels: organism → population → community → ecosystem → biosphere',
+'Abiotic factors: temperature, water, light, soil; biotic: other organisms',
+'Temperature: most organisms = 0-45°C; stenothermal (narrow range) vs eurythermal (wide range)',
+'Population attributes: birth rate, death rate, age structure, sex ratio',
+'Growth models: exponential (J-curve): dN/dt = rN; logistic (S-curve): dN/dt = rN(K-N)/K',
+'K = carrying capacity; r = intrinsic rate of natural increase',
+'Interspecific interactions: mutualism (+/+), commensalism (+/0), predation (+/-), competition (-/-), parasitism (+/-), amensalism (0/-)',
+'Gause\'s competitive exclusion principle: two species competing for identical niche cannot coexist'
+]},
+{id:'b36', subj:'bio', title:'Ecosystem',
+points:[
+'Ecosystem components: abiotic (climate, minerals) + biotic (producers, consumers, decomposers)',
+'Food chain: grass → grasshopper → frog → snake → hawk; energy flow is unidirectional',
+'Ecological pyramids: number, biomass, energy; energy pyramid always upright; biomass inverted in aquatic',
+'10% law (Lindemann): only 10% energy transferred to next trophic level',
+'GPP: gross primary productivity = total photosynthesis; NPP = GPP − respiration (used by organisms)',
+'Decomposition: fragmentation → leaching → catabolism → humification → mineralisation',
+'Biogeochemical cycles: carbon cycle (photosynthesis/respiration), nitrogen cycle, phosphorus cycle (no gaseous phase)',
+'Ecosystem services: provisioning, regulating, cultural, supporting; valued at US$33 trillion/year'
+]},
+{id:'b37', subj:'bio', title:'Biodiversity and Conservation',
+points:[
+'Biodiversity: genetic, species, ecological; India has 8.1% of global species in 2.4% land area',
+'Species richness increases toward equator; latitudinal gradient in diversity',
+'Biodiversity hotspots: 34 globally; 2 in India — Western Ghats + Sri Lanka, and Indo-Burma',
+'IUCN Red List categories: Extinct, Extinct in Wild, Critically Endangered, Endangered, Vulnerable, Near Threatened, Least Concern',
+'In-situ conservation: national parks, wildlife sanctuaries, biosphere reserves, sacred groves',
+'Ex-situ conservation: zoological parks, botanical gardens, seed banks, cryopreservation',
+'Alien/invasive species: major cause of biodiversity loss; e.g., Nile perch in Lake Victoria (destroyed 200 cichlid species)',
+'Convention on Biological Diversity (CBD, 1992): fair sharing of genetic resources; 196 parties'
+]},
+{id:'b38', subj:'bio', title:'Environmental Issues',
+points:[
+'Air pollution: SO₂, NOₓ, CO, particulates; EPA standards; catalytic converters in vehicles',
+'Greenhouse gases: CO₂ (major), CH₄, N₂O, CFCs; global warming → climate change',
+'Ozone depletion: CFCs destroy O₃ in stratosphere; UV-B increases → skin cancer, cataracts',
+'Montreal Protocol (1987): banned CFCs; ozone layer slowly recovering',
+'Biomagnification: DDT accumulates in fat; concentration increases at each trophic level; top predators most affected',
+'Eutrophication: excess nutrients (N, P) → algal blooms → O₂ depletion → fish kill',
+'Noise pollution: >75 dB harmful; >120 dB causes permanent hearing loss',
+'Chipko movement (1970s): Uttarakhand; village women hugged trees to prevent felling — grassroots conservation'
+]},
+
+// ═══ CHEMISTRY ═══
+{id:'c1', subj:'chem', title:'Some Basic Concepts of Chemistry',
+points:[
+'Mole concept: 1 mole = 6.022×10²³ particles (Avogadro\'s number); molar mass = mass of 1 mole in grams',
+'Molarity (M) = moles of solute / litres of solution; Molality (m) = moles / kg solvent',
+'Empirical formula = simplest whole number ratio; Molecular formula = actual number of atoms',
+'Limiting reagent: reagent completely consumed first; determines amount of product',
+'Percentage yield = (actual/theoretical) × 100',
+'Significant figures: all certain digits + one uncertain digit; addition/subtraction → fewest decimal places',
+'Law of conservation of mass, constant proportions, multiple proportions, reciprocal proportions',
+'Dalton\'s atomic theory: atoms indivisible, indestructible; compounds have fixed atom ratios'
+],
+formula:'n = m/M  |  C = n/V  |  %w/w = (w_solute/w_solution)×100\nPV = nRT  |  density = mass/volume'},
+{id:'c2', subj:'chem', title:'Structure of Atom',
+points:[
+'Electron: J.J. Thomson (1897); charge = −1.6×10⁻¹⁹ C; mass = 9.1×10⁻³¹ kg',
+'Nucleus: Rutherford (1911); proton discovered; Chadwick (1932) discovered neutron',
+'Bohr\'s model: electrons in fixed orbits; energy = −13.6/n² eV; works only for H-like atoms',
+'Quantum numbers: n (principal), l (azimuthal), mₗ (magnetic), mₛ (spin)',
+'Orbitals: s(spherical), p(dumbbell), d(double dumbbell), f; shapes given by ψ²',
+'Aufbau principle, Pauli exclusion principle, Hund\'s rule of maximum multiplicity',
+'de Broglie: λ = h/mv; Heisenberg uncertainty: Δx·Δp ≥ h/4π',
+'Electronic configuration: 1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s¹ is Cu (anomalous due to stability of filled d)'
+],
+formula:'E_n = −13.6/n² eV  |  λ = h/mv  |  Δx·Δp ≥ h/4π\nr_n = 0.529×n²/Z Å  |  v_n = 2.18×10⁶×Z/n m/s'},
+{id:'c3', subj:'chem', title:'Classification of Elements and Periodicity',
+points:[
+'Modern periodic law: properties are periodic functions of atomic number (Moseley, 1913)',
+'Periodic table: 18 groups, 7 periods; s (1-2), p (13-18), d (3-12), f (lanthanides/actinides) blocks',
+'Atomic radius: increases down group (more shells), decreases across period (↑nuclear charge)',
+'Ionisation enthalpy: increases across period, decreases down group; 2nd IE always > 1st IE',
+'Electron affinity (electron gain enthalpy): F and Cl have high EA; noble gases have positive EA (don\'t want electrons)',
+'Electronegativity: Pauling scale; F = 4.0 (highest); increases across period, decreases down group',
+'Metallic character: decreases across period, increases down group',
+'Oxide nature: Na₂O (basic) → Al₂O₃ (amphoteric) → Cl₂O₇ (acidic) — across period 3'
+]},
+{id:'c4', subj:'chem', title:'Chemical Bonding and Molecular Structure',
+points:[
+'Ionic bond: complete electron transfer; high MP/BP; conducts electricity when molten/dissolved',
+'Covalent bond: electron sharing; VSEPR theory predicts shape based on electron pairs',
+'VSEPR: BP-BP repulsion < LP-BP repulsion < LP-LP repulsion; lone pairs compress bond angles',
+'Shapes: 2=linear, 3=trigonal planar, 4=tetrahedral, 5=trigonal bipyramidal, 6=octahedral',
+'Hybridisation: sp (180°), sp² (120°), sp³ (109.5°), sp³d (TBP), sp³d² (octahedral)',
+'Molecular orbital theory: bonding + antibonding MOs; bond order = (Nb−Na)/2',
+'Bond order O₂ = 2 (paramagnetic, 2 unpaired e⁻); N₂ = 3 (strongest triple bond)',
+'Hydrogen bond: F-H…F, O-H…O, N-H…N; intermolecular (raises BP) vs intramolecular (o-nitrophenol)'
+],
+formula:'Bond order = (N_b − N_a)/2  |  formal charge = V − N − B/2\nDipole moment μ = q×d  |  % ionic character via dipole moment'},
+{id:'c5', subj:'chem', title:'States of Matter',
+points:[
+'Ideal gas: PV = nRT; no intermolecular forces, negligible volume',
+'van der Waals equation: (P + an²/V²)(V − nb) = nRT; a = intermolecular forces, b = size',
+'Boyle\'s law: PV = k (constant T); Charles\' law: V/T = k (constant P)',
+'Critical temperature Tc: above Tc, gas cannot be liquefied regardless of pressure',
+'Viscosity: resistance to flow; decreases with temperature (liquids); increases with temperature (gases)',
+'Surface tension: force per unit length; decreases with temperature; responsible for capillarity',
+'Intermolecular forces: London dispersion (all) < dipole-dipole < H-bond < ion-dipole',
+'Mean free path: average distance between collisions; increases with temperature, decreases with pressure'
+],
+formula:'PV = nRT  |  (P + an²/V²)(V−nb) = nRT\nKE_avg = 3/2 kT  |  u_rms = √(3RT/M)  |  Graham\'s law: rate ∝ 1/√M'},
+{id:'c6', subj:'chem', title:'Thermodynamics',
+points:[
+'System + surroundings = universe; open (mass+energy), closed (energy only), isolated (neither)',
+'First law: ΔU = q + w; q = heat, w = work (−PΔV for expansion)',
+'Enthalpy: H = U + PV; ΔH = qₚ (at constant pressure); ΔH = ΔU + ΔngRT',
+'Hess\'s law: ΔH is path-independent; can add/subtract thermochemical equations',
+'Entropy (S): measure of disorder; ΔS = qrev/T; solid < liquid < gas',
+'Second law: entropy of universe always increases for spontaneous process',
+'Gibbs energy: G = H − TS; ΔG = ΔH − TΔS; spontaneous if ΔG < 0',
+'Third law: entropy of perfect crystal at 0 K = 0; standard molar entropy at 298K > 0'
+],
+formula:'ΔU = q + w  |  ΔH = ΔU + ΔngRT  |  ΔG = ΔH − TΔS\nΔG° = −RT ln K  |  ΔG° = −nFE°  |  Cp − Cv = R'},
+{id:'c7', subj:'chem', title:'Equilibrium',
+points:[
+'Dynamic equilibrium: forward rate = reverse rate; concentrations constant but not equal',
+'Kc = product concentrations / reactant concentrations (raised to stoichiometric coefficients)',
+'Kp = Kc(RT)^Δn; Δn = moles of gaseous products − moles of gaseous reactants',
+'Le Chatelier\'s principle: system shifts to oppose any change in conditions',
+'Acids (Brønsted-Lowry): proton donors; Bases: proton acceptors; Lewis: electron pair acceptors/donors',
+'pH = −log[H⁺]; pKa = −log Ka; Ka × Kb = Kw = 10⁻¹⁴ (at 25°C)',
+'Buffer: weak acid + its conjugate base; Henderson-Hasselbalch: pH = pKa + log([A⁻]/[HA])',
+'Common ion effect: suppresses ionisation; solubility product Ksp = [Mn⁺]^m[Xⁿ⁻]^n'
+],
+formula:'Kc = [C]^c[D]^d / [A]^a[B]^b  |  Kp = Kc(RT)^Δn\npH = −log[H⁺]  |  pH = pKa + log[A⁻]/[HA]  |  Kw = Ka × Kb'},
+{id:'c8', subj:'chem', title:'Redox Reactions',
+points:[
+'Oxidation: loss of electrons, increase in oxidation number; Reduction: gain of electrons, decrease in ox. no.',
+'OIL RIG: Oxidation Is Loss, Reduction Is Gain',
+'Balancing by half-reaction (ion-electron) method: separate oxidation and reduction half-reactions',
+'Oxidation state rules: O = −2 (except peroxides = −1, OF₂ = +2); H = +1 (except metal hydrides = −1)',
+'Oxidation state of Cr in K₂Cr₂O₇ = +6; Mn in KMnO₄ = +7; Fe₃O₄ = +8/3',
+'Disproportionation: same element is both oxidised and reduced; e.g., Cl₂ in NaOH',
+'Standard electrode potential E°; more +ve = better oxidising agent; more −ve = better reducing agent',
+'Balancing in acidic medium: add H₂O to balance O; add H⁺ to balance H; in basic: add OH⁻'
+]},
+{id:'c9', subj:'chem', title:'Hydrogen',
+points:[
+'Isotopes: ¹H (protium), ²H (deuterium, D), ³H (tritium, T); D₂O = heavy water',
+'Preparation: Zn + H₂SO₄(dil) → ZnSO₄ + H₂; electrolysis of water; steam reforming of CH₄',
+'Hydrides: ionic (NaH, CaH₂), covalent (HCl, H₂S), metallic/interstitial (PdH)',
+'Water: bent structure (104.5°); H-bonding gives anomalous properties (high BP, surface tension, specific heat)',
+'Hard water: contains Mg²⁺, Ca²⁺ salts; temporary (HCO₃⁻, removed by boiling) vs permanent (SO₄²⁻, Cl⁻)',
+'Softening: ion exchange, adding Na₂CO₃ (washing soda), lime-soda process',
+'H₂O₂: pale blue, oily liquid; weak acid; oxidising (in acidic) and reducing (in alkaline) agent',
+'H₂O₂ structure: non-planar; O-O bond; bleaching action due to nascent oxygen'
+]},
+{id:'c10', subj:'chem', title:'The s-Block Elements',
+points:[
+'Group 1 (alkali metals): Li, Na, K, Rb, Cs, Fr; +1 oxidation state; soft, low MP, low IE',
+'Group 2 (alkaline earth metals): Be, Mg, Ca, Sr, Ba, Ra; +2 oxidation state; harder than group 1',
+'Flame colours: Li=red, Na=golden yellow, K=violet, Ca=brick red, Sr=crimson red, Ba=apple green',
+'Li anomalous behaviour (diagonal relationship with Mg): forms oxide not peroxide, no superoxide, forms Li₃N',
+'Sodium compounds: NaOH (caustic soda), Na₂CO₃ (washing soda), NaHCO₃ (baking soda), Na₂SO₄·10H₂O (Glauber\'s salt)',
+'Solvay process: NaCl + NH₃ + CO₂ + H₂O → NaHCO₃ → Na₂CO₃ + CO₂ + H₂O (calcination)',
+'Be anomalous: forms covalent compounds, amphoteric oxide, diagonal relationship with Al',
+'Plaster of Paris: 2CaSO₄·½H₂O (hemihydrate); sets by absorbing water → gypsum (CaSO₄·2H₂O)'
+]},
+{id:'c11', subj:'chem', title:'The p-Block Elements (Group 13-14)',
+points:[
+'Group 13 (Boron family): B, Al, Ga, In, Tl; +3 state (Tl also +1 inert pair effect)',
+'Boron: only non-metal in group 13; forms covalent compounds; borax (Na₂B₄O₇·10H₂O) structure = 2 BO₃ + 2 BO₄',
+'Aluminium: most abundant metal in earth\'s crust; amphoteric; reacts with NaOH → NaAlO₂ + H₂',
+'Alum: KAl(SO₄)₂·12H₂O; used in water purification, tanning, dyeing',
+'Group 14 (Carbon family): C, Si, Ge, Sn, Pb; C and Si tetravalent; +4 and +2 (Pb, Sn)',
+'Catenation: C > Si > Ge > Sn; carbon forms millions of compounds due to catenation + multiple bonds',
+'Allotropes of carbon: diamond (sp³, hardest), graphite (sp², conductor), fullerene (C₆₀, buckyball)',
+'Silicates: basic unit SiO₄⁴⁻ tetrahedra; chain, ring, sheet, 3D silicates; glass = sodium calcium silicate'
+]},
+{id:'c12', subj:'chem', title:'The p-Block Elements (Group 15-18)',
+points:[
+'Group 15 (N family): N, P, As, Sb, Bi; +3 to +5 oxidation states; N₂ triple bond (most stable)',
+'Ammonia (NH₃): sp³, pyramidal; H-bonding; Haber process: N₂ + 3H₂ ⇌ 2NH₃ (Fe catalyst, 450°C, 200 atm)',
+'Oxoacids of P: H₃PO₄ (tribasic, +5), H₃PO₃ (dibasic, +3), H₃PO₂ (monobasic, +1)',
+'Group 16 (O family): O, S, Se, Te, Po; -2 common; S shows +4, +6 also',
+'H₂SO₄: Contact process (V₂O₅ catalyst); strongest dibasic acid; dehydrating + oxidising agent',
+'Group 17 (Halogens): F, Cl, Br, I; -1 state; F = only -1; F no d-orbitals, no oxoacids (except HOF)',
+'Interhalogen compounds: XY, XY₃, XY₅, XY₇; more reactive than halogens; ICl more reactive than I₂',
+'Group 18 (Noble gases): He, Ne, Ar, Kr, Xe, Rn; XeF₂, XeF₄, XeF₆ compounds exist; He used in airships'
+]},
+{id:'c13', subj:'chem', title:'The d and f-Block Elements',
+points:[
+'Transition metals (d-block): 3d (Sc-Zn), 4d (Y-Cd), 5d (La, Hf-Hg); variable oxidation states',
+'Properties: variable OS due to close energy of (n-1)d and ns; paramagnetic; catalytic activity; complex formation',
+'Colour of compounds: d-d transitions absorb visible light; Ti³⁺ (purple), Cu²⁺ (blue), Cr³⁺ (green)',
+'KMnO₄: deep purple; strong oxidising agent; Mn +7; prepared by fusion of MnO₂ with KOH',
+'K₂Cr₂O₇: orange; Cr +6; oxidising in acidic medium; used in volumetric analysis',
+'Lanthanides: 4f¹⁻¹⁴ filling; +3 common; lanthanide contraction → similar size of 4d and 5d',
+'Lanthanide contraction cause: poor shielding by 4f electrons; affects properties of 5d transition metals',
+'Actinides: 5f filling; radioactive; +3 and +4 common; used in nuclear reactors'
+]},
+{id:'c14', subj:'chem', title:'Coordination Compounds',
+points:[
+'Werner\'s theory: primary valency (ionisable, −ve ligands) + secondary valency (co-ordination, directional)',
+'Coordination number: number of ligand atoms directly bonded to central metal',
+'Ligands: monodentate (Cl⁻, NH₃), bidentate (en, ox²⁻), polydentate (EDTA = hexadentate)',
+'IUPAC nomenclature: [Co(NH₃)₄Cl₂]Cl = tetraamminedichloridocobalt(III) chloride; ligands alphabetical',
+'Isomerism: structural (ionisation, linkage, solvate, coordination) + stereoisomerism (geometric, optical)',
+'Crystal Field Theory: d orbitals split in ligand field; Δo (octahedral) = 10Dq; strong vs weak field ligands',
+'Spectrochemical series: I⁻ < Br⁻ < Cl⁻ < F⁻ < OH⁻ < C₂O₄²⁻ < H₂O < py < en < CN⁻ < CO (strong)',
+'EAN (effective atomic number) rule: 18-electron rule for stable complexes'
+]},
+{id:'c15', subj:'chem', title:'Haloalkanes and Haloarenes',
+points:[
+'Haloalkanes: alkyl halides; sp³ C−X bond; C−F strongest, C−I weakest; polar bonds',
+'Nucleophilic substitution: SN1 (carbocation intermediate, tertiary, racemisation) vs SN2 (backside attack, primary, inversion = Walden inversion)',
+'Elimination: E1 (carbocation) vs E2 (concerted); Saytzeff\'s rule: more substituted alkene preferred',
+'Haloarenes: C−X bond has partial double bond character (resonance); less reactive toward nucleophiles',
+'Electrophilic substitution in haloarenes: halogens are o/p-directors (despite -I effect, +M dominates)',
+'Grignard reagent: R-MgX (in dry ether); reacts with carbonyl, CO₂, H₂O',
+'Polyhalogen compounds: CCl₄ (fire extinguisher, not flammable); CHCl₃ (chloroform, anaesthetic)',
+'DDT: dichlorodiphenyltrichloroethane; organochlorine pesticide; banned due to biomagnification'
+]},
+{id:'c16', subj:'chem', title:'Alcohols, Phenols and Ethers',
+points:[
+'Alcohols: -OH on sp³ carbon; primary (1°), secondary (2°), tertiary (3°); H-bonding → high BP',
+'Preparation: hydration of alkene (Markovnikov), reduction of carbonyl, Grignard + carbonyl',
+'Reactions: dehydration (conc. H₂SO₄, 170°C → alkene; 140°C → ether), oxidation, esterification',
+'Lucas test: ZnCl₂ + conc. HCl; 3° = immediate turbidity; 2° = turbidity in 5 min; 1° = no turbidity',
+'Phenols: -OH on benzene ring; acidic (pKa ≈ 10); more acidic than alcohols; less acidic than carboxylic acids',
+'Phenol reactions: electrophilic aromatic substitution (o/p-directors due to -OH); Kolbe-Schmidt (salicylic acid)',
+'Ethers: R-O-R; low BP (no H-bonding); Williamson synthesis: R-OH + R\'X → R-O-R\' + HX',
+'Distinguish: Na metal (alcohols liberate H₂; ethers don\'t); FeCl₃ (phenols → violet colour)'
+]},
+{id:'c17', subj:'chem', title:'Aldehydes, Ketones and Carboxylic Acids',
+points:[
+'Aldehydes (RCHO) vs Ketones (RCOR\'): both have C=O (carbonyl); aldehydes more reactive',
+'Nucleophilic addition: CN⁻, RMgX, NaHSO₃, NH₃ derivatives attack carbonyl C',
+'Aldol condensation: 2CH₃CHO → CH₃CH(OH)CH₂CHO (aldol); base-catalysed',
+'Cannizzaro reaction: aldehydes with no α-H (HCHO, benzaldehyde) disproportionate in base',
+'Tollens\' test: [Ag(NH₃)₂]⁺ → silver mirror (aldehydes only); Fehling\'s test: Cu²⁺ → Cu₂O (red-orange)',
+'Carboxylic acids (-COOH): most acidic organic compounds; pKa ≈ 4-5; H-bonding → exist as dimers',
+'Acidity order: HCOOH > CH₃COOH; electron-withdrawing groups increase acidity (e.g., Cl₃CCOOH)',
+'Hell-Volhard-Zelinsky reaction: RCH₂COOH + Cl₂ (red P) → α-chloro acid; used for α-substitution'
+]},
+{id:'c18', subj:'chem', title:'Amines',
+points:[
+'Amines: N with lone pair; primary (RNH₂), secondary (R₂NH), tertiary (R₃N); pyramidal geometry',
+'Basicity order: aliphatic amines > NH₃ > aniline; in gas phase: 3° > 2° > 1°; in water: 2° > 1° > 3° > NH₃',
+'Aniline: less basic due to lone pair delocalization into benzene ring; pKb = 9.38',
+'Gabriel synthesis: phthalimide + RX → N-alkylphthalimide → primary amine (pure, no 2°/3° contamination)',
+'Hofmann bromamide reaction: RCONH₂ + Br₂ + NaOH → RNH₂ (amine with one less C)',
+'Diazonium salts (ArN₂⁺X⁻): formed from aniline + NaNO₂ + HCl at 0-5°C; important in synthesis',
+'Coupling reaction: diazonium + phenol/aniline → azo dye (−N=N− linkage); orange-red colour',
+'Carbylamine reaction: 1° amines + CHCl₃ + KOH → isocyanides (foul smell); test for 1° amines only'
+]},
+{id:'c19', subj:'chem', title:'Biomolecules',
+points:[
+'Carbohydrates: Cx(H₂O)y; monosaccharides (glucose, fructose, galactose), disaccharides, polysaccharides',
+'Glucose: aldohexose (open chain CHO-CHOH-CHOH-CHOH-CHOH-CH₂OH); α-D and β-D glucose (anomers)',
+'Glycosidic bond: C1-O-C4 in maltose/cellobiose; C1-O-C2 in sucrose (non-reducing)',
+'Sucrose: non-reducing sugar (no free anomeric OH); hydrolysis → glucose + fructose (invert sugar)',
+'Amino acids: 20 types; α-amino acids; zwitterion form at isoelectric point; essential (cannot be synthesised)',
+'Protein structure: 1° (sequence), 2° (H-bonds: α-helix, β-sheet), 3° (3D folding), 4° (multiple chains)',
+'DNA: deoxyribose + phosphate + bases; double helix; A-T (2 H-bonds), G-C (3 H-bonds); major info carrier',
+'Enzymes: catalysts (lower activation energy); lock-and-key vs induced fit model; cofactors (metal ions) and coenzymes (vitamins)'
+]},
+{id:'c20', subj:'chem', title:'Polymers',
+points:[
+'Addition polymerisation: alkenes; free radical/cationic/anionic mechanism; polyethylene, PVC, Teflon',
+'Condensation polymerisation: loss of small molecule (H₂O, HCl); nylon, polyester, bakelite',
+'Nylon-6,6: hexamethylenediamine + adipic acid; amide linkages; strong, heat-resistant',
+'Nylon-6: caprolactam ring opening; similar properties to nylon-6,6',
+'Polyester (terylene/dacron): ethylene glycol + terephthalic acid; ester linkages',
+'Bakelite: phenol + formaldehyde; cross-linked; thermosetting (cannot be remelted)',
+'Natural rubber: cis-polyisoprene; vulcanisation with S increases strength and elasticity; Buna-S, Buna-N (synthetic)',
+'Biodegradable polymers: PHBV (poly-β-hydroxybutyrate-co-β-hydroxyvalerate); eco-friendly packaging'
+]},
+{id:'c21', subj:'chem', title:'Chemistry in Everyday Life',
+points:[
+'Analgesics: non-narcotic (aspirin, paracetamol — inhibit prostaglandin synthesis) vs narcotic (morphine, codeine)',
+'Aspirin: acetylsalicylic acid; antipyretic, analgesic, anti-inflammatory; anticoagulant at low doses',
+'Antibiotics: bactericidal (kill bacteria: penicillin, ofloxacin) vs bacteriostatic (inhibit growth: tetracycline)',
+'Broad spectrum: effective against many species; Narrow spectrum: specific (penicillin for gram +ve)',
+'Antacids: neutralise stomach acid; NaHCO₃, Mg(OH)₂, Al(OH)₃; should not cause alkalosis',
+'Antihistamines: block histamine receptors; e.g., brompheniramine, terfenadine; treat allergies',
+'Detergents: anionic (sodium lauryl sulphate), cationic (germicidal), non-ionic (does not ionise)',
+'Soaps vs detergents: soaps are sodium/potassium salts of fatty acids; ineffective in hard water; detergents work in hard water'
+]},
+{id:'c22', subj:'chem', title:'Solutions',
+points:[
+'Types of solutions: solid-in-liquid (salt water), gas-in-liquid (soda), liquid-in-liquid (alcohol+water)',
+'Henry\'s law: partial pressure of gas ∝ mole fraction in solution; used for carbonated drinks, deep sea diving',
+'Raoult\'s law: vapour pressure of solvent over solution = mole fraction × VP of pure solvent',
+'Colligative properties depend only on number of solute particles (not nature)',
+'Relative lowering of VP: ΔP/P° = x_solute (mole fraction)',
+'Elevation of boiling point: ΔTb = Kb × m; Kb = ebullioscopic constant',
+'Depression of freezing point: ΔTf = Kf × m; Kf = cryoscopic constant; water Kf = 1.86 K·kg/mol',
+'Osmotic pressure: π = iMRT; used for molar mass determination; reverse osmosis for water purification'
+],
+formula:'π = iMRT  |  ΔTb = i·Kb·m  |  ΔTf = i·Kf·m\np = p°·x₁  |  ΔP/p° = x₂ (mole fraction of solute)'},
+{id:'c23', subj:'chem', title:'Electrochemistry',
+points:[
+'Electrochemical cell: chemical energy → electrical energy; anode (oxidation, −ve) and cathode (reduction, +ve)',
+'EMF = E°cathode − E°anode; positive EMF = spontaneous; related to ΔG = −nFE',
+'Nernst equation: E = E° − (RT/nF)ln Q = E° − (0.059/n)log Q at 25°C',
+'Kohlrausch\'s law: limiting molar conductivity = sum of ionic conductivities (λ° = λ_cation + λ_anion)',
+'Electrolysis: electrical → chemical; Faraday\'s 1st law: mass deposited ∝ charge; 2nd law: ∝ equivalent mass',
+'1 Faraday = 96485 C/mol (charge of 1 mol electrons); 1 F deposits 1 equivalent mass',
+'Conductance vs concentration: strong electrolytes decrease smoothly; weak electrolytes decrease steeply',
+'Batteries: Leclanche (dry cell, 1.5V), Lead storage (12V, rechargeable), Fuel cell (H₂+O₂ → H₂O+electricity)'
+],
+formula:'ΔG° = −nFE°  |  E = E° − (0.059/n)log Q\nΛm = κ × 1000/M  |  m = ZIt/F (Faraday\'s law)'},
+{id:'c24', subj:'chem', title:'Chemical Kinetics',
+points:[
+'Rate of reaction: change in concentration per unit time; rate = −d[A]/dt = +d[B]/dt (stoichiometry corrected)',
+'Rate law: rate = k[A]^m[B]^n; m + n = overall order; determined experimentally (not from equation)',
+'Zero order: [A] = [A]₀ − kt; t½ = [A]₀/2k; 1st order: [A] = [A]₀e^(−kt); t½ = 0.693/k',
+'Arrhenius equation: k = Ae^(−Ea/RT); ln k = ln A − Ea/RT; A = frequency factor',
+'Activation energy (Ea): minimum energy needed for reaction; catalyst lowers Ea',
+'Collision theory: reaction rate depends on collision frequency × fraction with sufficient energy × proper orientation',
+'Molecularity (elementary steps only): unimolecular, bimolecular, termolecular; order ≠ molecularity always',
+'Temperature coefficient: rate doubles for every 10°C rise; Q₁₀ = 2'
+],
+formula:'k = Ae^(−Ea/RT)  |  t½ = 0.693/k (1st order)  |  rate = k[A]^m[B]^n\nln(k₂/k₁) = (Ea/R)(1/T₁ − 1/T₂)'},
+{id:'c25', subj:'chem', title:'Surface Chemistry',
+points:[
+'Adsorption: accumulation at surface; exothermic; physisorption (van der Waals, reversible) vs chemisorption (chemical bond, irreversible)',
+'Freundlich adsorption isotherm: x/m = kP^(1/n); at high P, surface saturated',
+'Catalysis: homogeneous (same phase), heterogeneous (different phase); increases rate by lowering Ea',
+'Zeolites: shape-selective catalysts (molecular sieves); used in petroleum refining, cracking',
+'Colloids: dispersed phase 1–100 nm; heterogeneous; shows Tyndall effect, Brownian motion',
+'Types: sol (solid/liquid), aerosol (solid/liquid in gas), gel (liquid in solid), emulsion (liquid in liquid)',
+'Coagulation: addition of electrolyte destabilises colloid (Hardy-Schulze rule: higher charge = more coagulation)',
+'Gold number: minimum mg of protective colloid to prevent coagulation of 10 mL of gold sol by 1 mL 10% NaCl; lower = better'
+]},
+{id:'c26', subj:'chem', title:'General Principles and Processes of Isolation of Elements',
+points:[
+'Metallurgy: mining → concentration → extraction → refining',
+'Concentration: hand picking, levigation (gravity), froth flotation (sulphide ores), magnetic separation, leaching (chemical)',
+'Froth flotation: sulphide ores; pine oil frother; ore particles attach to froth, gangue sinks',
+'Reduction: oxide ores → CO (blast furnace); reactive metals → electrolytic; Goldschmidt thermite: Al + Cr₂O₃',
+'Ellingham diagram: ΔG° vs T; metals below carbon can be reduced by carbon; Al₂O₃ most stable at high T',
+'Refining: distillation, liquation, electrolytic, zone refining (semiconductors), vapour phase (Van Arkel for Ti/Zr)',
+'Blast furnace (Fe): Fe₂O₃ + 3CO → 2Fe + 3CO₂; pig iron (4% C) → steel (0.2-2% C) → wrought iron (<0.5% C)',
+'Hall-Heroult (Al): Al₂O₃ dissolved in molten cryolite; electrolysed; Al deposited at cathode'
+]},
+{id:'c27', subj:'chem', title:'Solid State',
+points:[
+'Crystalline solids: long-range order, sharp MP, anisotropic; Amorphous: short-range, no sharp MP, isotropic',
+'Crystal systems: 7 (cubic, tetragonal, orthorhombic, hexagonal, trigonal, monoclinic, triclinic); 14 Bravais lattices',
+'Cubic unit cells: Simple (1 atom/cell), BCC (2), FCC/CCP (4); HCP (6 atoms per unit cell effective)',
+'Packing efficiency: Simple cubic 52.4%; BCC 68%; FCC/HCP 74% (most efficient)',
+'Voids: tetrahedral (smaller) and octahedral (larger) in close-packed structures',
+'Defects: Schottky (cation + anion missing, density↓, ionic solids); Frenkel (ion displaced to interstitial, density unchanged)',
+'Electrical properties: conductors (overlapping bands), semiconductors (small band gap), insulators (large band gap)',
+'n-type (extra electrons from donor impurity like P in Si); p-type (holes from acceptor impurity like B in Si)'
+],
+formula:'Density ρ = nM/(NA·a³)  |  r_cation/r_anion ratio determines coordination number\nFor FCC: a = 2√2·r  |  For BCC: a = 4r/√3'},
+{id:'c28', subj:'chem', title:'Nuclear Chemistry and Environmental Chemistry',
+points:[
+'Radioactivity: α (⁴He nucleus, +2), β (electron, −1), γ (electromagnetic, no charge/mass)',
+'α decay: Z↓2, A↓4; β decay: Z↑1, A unchanged; γ: no change in Z or A',
+'Half-life: t½ = 0.693/λ; N = N₀(½)^(t/t½); C-14 dating (t½ = 5730 yrs)',
+'Nuclear fission: heavy nucleus splits (U-235 + n → Ba + Kr + 3n + energy); chain reaction',
+'Nuclear fusion: light nuclei fuse (H + H → He); requires extremely high temperature; powers sun',
+'Air pollutants: primary (directly emitted) vs secondary (formed in atmosphere from reactions)',
+'BOD (biological oxygen demand): oxygen required to decompose organic matter; high BOD = polluted water',
+'Smog: photochemical smog = NO₂ + hydrocarbons + UV → O₃ + PAN; classical smog = SO₂ + particulates'
+]},
+{id:'c29', subj:'chem', title:'Organic Chemistry: Basic Principles',
+points:[
+'Hybridisation: sp³ (tetrahedral, 109.5°), sp² (trigonal planar, 120°), sp (linear, 180°)',
+'Inductive effect: electron displacement along σ bonds; −I effect (Cl, NO₂); +I effect (alkyl groups)',
+'Resonance: delocalisation of π electrons; canonical structures; resonance hybrid = most stable form',
+'Electrophiles: electron-deficient species (H⁺, Br⁺, NO₂⁺, BF₃); Nucleophiles: electron-rich (OH⁻, CN⁻, NH₃)',
+'Types of reactions: SN1, SN2 (substitution), E1, E2 (elimination), addition to alkenes, electrophilic aromatic',
+'Carbocations: 3° > 2° > 1° > methyl; stabilised by hyperconjugation and +I effect',
+'Carbanions: stability opposite to carbocations; 1° > 2° > 3°',
+'Free radicals: sp² hybridised, planar; stability 3° > 2° > 1°; responsible for chain reactions'
+]},
+{id:'c30', subj:'chem', title:'Hydrocarbons',
+points:[
+'Alkanes: CnH₂n+2; free radical halogenation; combustion; cracking (high T or catalyst)',
+'Markovnikov\'s rule: in HX addition to alkene, H goes to carbon with more H (more stable carbocation)',
+'Anti-Markovnikov (peroxide effect): free radical mechanism; Br goes to less substituted C',
+'Benzene: aromatic, planar, 120° bond angles, all C-C bonds equal (1.4 Å); 6 π electrons (Hückel: 4n+2)',
+'Electrophilic aromatic substitution: halogenation, nitration, sulphonation, Friedel-Crafts alkylation/acylation',
+'Activating groups (o/p directors): -OH, -NH₂, -OCH₃, -CH₃; deactivating (m-directors): -NO₂, -COOH, -CN',
+'Acetylene (ethyne): sp hybridised; acidic H (reacts with Na); forms copper acetylide (Cu₂C₂)',
+'Conformations of ethane: staggered (stable, 60° dihedral) vs eclipsed (unstable); due to torsional strain'
+]},
+
+// ═══ PHYSICS ═══
+{id:'p1', subj:'phy', title:'Physical World and Units',
+points:[
+'SI base units: metre (m), kilogram (kg), second (s), ampere (A), kelvin (K), mole (mol), candela (cd)',
+'Fundamental forces: gravitational (weakest), electromagnetic, weak nuclear, strong nuclear (strongest)',
+'Dimensional analysis: dimensions of physical quantities; used for checking equations and unit conversion',
+'Significant figures rules: non-zero digits, zeros between non-zero digits, trailing zeros after decimal all significant',
+'Errors: systematic (constant bias), random (statistical), gross (blunders); Accuracy vs Precision',
+'Absolute error = |measured − true|; Relative error = absolute/true; Percentage error = relative × 100',
+'Dimensional formula of viscosity: [ML⁻¹T⁻¹]; Surface tension: [MT⁻²]; Pressure: [ML⁻¹T⁻²]',
+'Parsec (astronomical): 1 pc = 3.086×10¹⁶ m; 1 light year = 9.46×10¹⁵ m; 1 AU = 1.5×10¹¹ m'
+],
+formula:'[Force] = MLT⁻²  |  [Energy] = ML²T⁻²  |  [Power] = ML²T⁻³\n[Pressure] = ML⁻¹T⁻²  |  [Momentum] = MLT⁻¹'},
+{id:'p2', subj:'phy', title:'Motion in a Straight Line',
+points:[
+'Average velocity = Δx/Δt; Instantaneous velocity = dx/dt (slope of x-t graph)',
+'Average acceleration = Δv/Δt; Instantaneous acceleration = dv/dt (slope of v-t graph)',
+'Area under v-t graph = displacement; Area under a-t graph = change in velocity',
+'Equations of motion (uniform acceleration): v = u + at; s = ut + ½at²; v² = u² + 2as',
+'Free fall: a = g = 9.8 m/s²; time to reach max height: t = u/g; max height = u²/2g',
+'Relative velocity: v_AB = v_A − v_B; both moving same direction: subtract; opposite: add',
+'sₙ = u + a(2n−1)/2: displacement in nth second',
+'Non-uniform motion: use calculus; v = dx/dt; a = dv/dt = v(dv/dx)'
+],
+formula:'v = u + at  |  s = ut + ½at²  |  v² = u² + 2as\nsₙ = u + a(2n−1)/2  |  g = 9.8 m/s²'},
+{id:'p3', subj:'phy', title:'Motion in a Plane',
+points:[
+'Vectors: magnitude + direction; addition by parallelogram/triangle law; dot product and cross product',
+'Projectile: horizontal (uniform) + vertical (accelerated); independent motions',
+'Range R = u²sin2θ/g; Max range at 45°; Max height H = u²sin²θ/2g',
+'Time of flight T = 2u sinθ/g; Range same for θ and (90°−θ)',
+'Circular motion: ω = v/r; centripetal acceleration a = v²/r = ω²r; centripetal force = mv²/r',
+'Angular velocity ω = dθ/dt; Linear velocity v = rω; relation: v = rω',
+'Period T = 2π/ω; Frequency f = ω/2π',
+'Relative velocity in 2D: V_AB = V_A − V_B (vector subtraction); used for rain-man and river-boat problems'
+],
+formula:'R = u²sin2θ/g  |  H = u²sin²θ/2g  |  T = 2usinθ/g\na_c = v²/r = ω²r  |  v = rω  |  T = 2πr/v'},
+{id:'p4', subj:'phy', title:'Laws of Motion',
+points:[
+'Newton\'s 1st law: inertia; body at rest stays at rest, moving stays moving unless acted on by external force',
+'Newton\'s 2nd law: F = ma; rate of change of momentum; F = dp/dt',
+'Newton\'s 3rd law: every action has equal and opposite reaction; forces act on different bodies',
+'Friction: static (fs ≤ μsN), kinetic (fk = μkN); μs > μk; rolling friction < sliding friction',
+'Free body diagram: isolate body, draw all forces (weight, normal, friction, applied, tension)',
+'Pseudo force in non-inertial frame: F_pseudo = −ma (opposite to acceleration of frame)',
+'Impulse: J = FΔt = Δp = m(v − u); area under F-t graph',
+'Tension in string over pulley (Atwood): T = 2m₁m₂g/(m₁+m₂); a = (m₁−m₂)g/(m₁+m₂)'
+],
+formula:'F = ma = dp/dt  |  fk = μkN  |  Impulse J = FΔt = Δp\nAtwood: a = (m₁−m₂)g/(m₁+m₂)  |  T = 2m₁m₂g/(m₁+m₂)'},
+{id:'p5', subj:'phy', title:'Work, Energy and Power',
+points:[
+'Work: W = F·d·cosθ; scalar; positive (F and d same direction), negative (F and d opposite)',
+'Work-energy theorem: W_net = ΔKE = ½mv² − ½mu²',
+'Conservative force: work done independent of path; potential energy defined only for conservative forces',
+'Potential energy: gravitational (mgh), spring (½kx²); Total ME = KE + PE = constant (conservative system)',
+'Power: P = W/t = Fv; unit = watt (W) = J/s; 1 hp = 746 W',
+'Elastic collision: KE and momentum conserved; for equal masses: velocities exchange',
+'Inelastic collision: momentum conserved, KE not; perfectly inelastic: stick together',
+'Coefficient of restitution: e = relative velocity of separation / relative velocity of approach; elastic: e=1; perfectly inelastic: e=0'
+],
+formula:'W = Fd cosθ  |  KE = ½mv²  |  PE = mgh, ½kx²\nP = Fv  |  e = (v₂−v₁)/(u₁−u₂)  |  W-E theorem: W_net = ΔKE'},
+{id:'p6', subj:'phy', title:'System of Particles and Rotational Motion',
+points:[
+'Centre of mass: x_cm = Σmᵢxᵢ/Σmᵢ; for continuous: ∫x dm/M; symmetric bodies: at geometric centre',
+'Torque: τ = r × F = rF sinθ; rotational analogue of force; τ = Iα',
+'Moment of inertia: I = Σmᵢrᵢ²; rotational analogue of mass; depends on axis of rotation',
+'Parallel axis theorem: I = Icm + Md²; Perpendicular axis theorem (lamina): Iz = Ix + Iy',
+'MI of important bodies: rod (ML²/12 about centre; ML²/3 about end); disc (MR²/2); sphere (2MR²/5)',
+'Angular momentum: L = Iω = r × p; τ = dL/dt; conservation if τ_ext = 0',
+'Rolling without slipping: v = rω; KE_total = ½mv² + ½Iω² = ½mv²(1 + I/mr²)',
+'Radius of gyration K: I = MK²; K = √(I/M)'
+],
+formula:'τ = Iα  |  L = Iω  |  I_disc = MR²/2  |  I_sphere = 2MR²/5\nParallel axis: I = Icm + Md²  |  KE_rolling = ½mv²(1+k²/R²)'},
+{id:'p7', subj:'phy', title:'Gravitation',
+points:[
+'Newton\'s law: F = Gm₁m₂/r²; G = 6.67×10⁻¹¹ N·m²/kg²; universal, always attractive',
+'g = GM/R²; g decreases with altitude (g\' = g(1−2h/R)) and depth (g\' = g(1−d/R))',
+'Gravitational PE: U = −GMm/r; negative → bound system; zero at infinity',
+'Escape velocity: vₑ = √(2GM/R) = √(2gR); ≈ 11.2 km/s for Earth',
+'Orbital velocity: v₀ = √(GM/r) = √(gR²/r); for circular orbit; v₀ = vₑ/√2 at surface',
+'Kepler\'s laws: 1. Elliptical orbits; 2. Equal areas in equal times (areal velocity = L/2m = const); 3. T² ∝ r³',
+'Satellites: geostationary (T=24h, h≈36000 km, circular equatorial orbit); polar (reconnaissance)',
+'Binding energy of satellite: −E = GMm/2r; total E = −GMm/2r (negative = bound)'
+],
+formula:'F = Gm₁m₂/r²  |  vₑ = √(2gR) = 11.2 km/s  |  v₀ = √(gR)\nT² ∝ r³ (Kepler)  |  g\' = g(1−2h/R) for altitude'},
+{id:'p8', subj:'phy', title:'Mechanical Properties of Solids',
+points:[
+'Stress = F/A (force per unit area); Strain = ΔL/L (dimensionless); Young\'s modulus E = stress/strain',
+'Hooke\'s law: stress ∝ strain (within elastic limit); elastic limit → yield point → plastic deformation → fracture',
+'Young\'s modulus: Y = FL₀/AΔL; for stretching; steel > aluminium > rubber',
+'Bulk modulus: B = −ΔP/(ΔV/V); for volume change; liquids and gases have only bulk modulus',
+'Shear modulus (rigidity modulus): G = shear stress / shear strain; fluids G = 0',
+'Poisson\'s ratio: σ = −(lateral strain)/(longitudinal strain); 0 < σ < 0.5 for most materials',
+'Elastic potential energy: U = ½ × stress × strain × Volume = F²L/2AY',
+'Thermal stress: F/A = YαΔT; where α = coefficient of linear expansion'
+],
+formula:'Y = FL/(AΔL)  |  B = −VΔP/ΔV  |  U = ½YA(ΔL)²/L\nStress = F/A  |  Strain = ΔL/L  |  Y = stress/strain'},
+{id:'p9', subj:'phy', title:'Mechanical Properties of Fluids',
+points:[
+'Pressure: P = F/A = ρgh; Pascal\'s law: pressure applied to enclosed fluid transmitted equally in all directions',
+'Archimedes\' principle: buoyant force = weight of fluid displaced; condition for floating: ρ_object ≤ ρ_fluid',
+'Continuity equation: A₁v₁ = A₂v₂; conservation of mass in fluid flow',
+'Bernoulli\'s equation: P + ½ρv² + ρgh = constant; conservation of energy in flowing fluid',
+'Venturimeter and Pitot tube: applications of Bernoulli; measure flow speed',
+'Viscosity: η = F/(A·dv/dx); Poiseuille\'s law: Q = πPr⁴/8ηL; Stokes\' law: F = 6πηrv',
+'Terminal velocity: v_t = 2r²(ρ−σ)g/9η; sphere falling through viscous fluid',
+'Surface tension: T = F/L; excess pressure inside bubble: 4T/r (soap); 2T/r (liquid drop/inside 1 surface)'
+],
+formula:'P = ρgh  |  A₁v₁ = A₂v₂  |  P + ½ρv² + ρgh = const\nv_t = 2r²(ρ-σ)g/9η  |  T = F/L  |  excess P(soap) = 4T/r'},
+{id:'p10', subj:'phy', title:'Thermal Properties of Matter',
+points:[
+'Temperature scales: C/100 = (F−32)/180 = (K−273)/100; K = °C + 273.15',
+'Thermal expansion: linear (ΔL = LαΔT), area (ΔA = AβΔT = 2αΔT), volume (ΔV = VγΔT = 3αΔT)',
+'Specific heat capacity: Q = mcΔT; specific heat of water = 4200 J/(kg·K)',
+'Calorimetry: heat lost = heat gained; mixing: m₁c₁ΔT₁ = m₂c₂ΔT₂',
+'Latent heat: Q = mL; no temperature change during phase transition; Lf (fusion) < Lv (vaporisation)',
+'Conduction: Q/t = KA(T₁−T₂)/L; K = thermal conductivity; good conductors: metals',
+'Convection: fluid carries heat; natural (density difference) vs forced (fan, pump)',
+'Newton\'s law of cooling: dT/dt = −k(T−T₀); rate of cooling ∝ excess temperature; Stefan\'s: E = σT⁴'
+],
+formula:'Q = mcΔT  |  Q = mL  |  ΔL = LαΔT  |  K = Q·L/(A·ΔT·t)\nStefan: E = σT⁴  |  σ = 5.67×10⁻⁸ W/m²K⁴'},
+{id:'p11', subj:'phy', title:'Thermodynamics',
+points:[
+'First law: ΔU = Q − W; Q = heat absorbed by system, W = work done BY system',
+'Work done by gas: W = PΔV (isobaric); W = 0 (isochoric); W = nRT ln(V₂/V₁) (isothermal)',
+'Isothermal (ΔT=0): ΔU = 0; Q = W; PV = constant',
+'Adiabatic (Q=0): ΔU = −W; TV^(γ−1) = const; PV^γ = const; γ = Cp/Cv',
+'Efficiency of Carnot engine: η = 1 − T₂/T₁ = (T₁−T₂)/T₁; maximum possible efficiency',
+'Entropy: ΔS = Q_rev/T; ΔS universe ≥ 0 for all processes; = 0 for reversible',
+'Cp − Cv = R (ideal gas); γ = 5/3 (monatomic), 7/5 (diatomic)',
+'Heat pump/refrigerator COP: COP_ref = Q₂/W = T₂/(T₁−T₂); COP_HP = Q₁/W = T₁/(T₁−T₂)'
+],
+formula:'ΔU = Q − W  |  η_Carnot = 1−T₂/T₁  |  PVγ = const (adiabatic)\nCp−Cv = R  |  W_iso = nRT ln(V₂/V₁)  |  γ = Cp/Cv'},
+{id:'p12', subj:'phy', title:'Kinetic Theory',
+points:[
+'Assumptions: large number of molecules, elastic collisions, negligible molecule volume, random motion',
+'PV = nRT = NkT; P = ρ<v²>/3 = (1/3)nm<v²>; n = number density',
+'KE_avg = (3/2)kT per molecule = (3/2)RT per mole; average KE proportional to absolute temperature',
+'Root mean square speed: v_rms = √(3RT/M); most probable: v_p = √(2RT/M); mean: v_avg = √(8RT/πM)',
+'Degrees of freedom: monatomic = 3; diatomic = 5 (3 translational + 2 rotational); polyatomic = 6',
+'Equipartition theorem: energy per DOF = ½kT; total internal energy: U = f/2 × nRT',
+'Cv = f/2 × R; monatomic Cv = 3R/2, Cp = 5R/2; diatomic Cv = 5R/2, Cp = 7R/2',
+'Mean free path: λ = 1/(√2 × nπd²); increases with temperature, decreases with pressure'
+],
+formula:'v_rms = √(3RT/M)  |  KE = 3/2kT  |  PV = nRT\nCv = fR/2  |  γ = Cp/Cv = (f+2)/f  |  λ = 1/(√2·nπd²)'},
+{id:'p13', subj:'phy', title:'Oscillations',
+points:[
+'SHM: restoring force F = −kx; a = −ω²x; x = A sin(ωt + φ)',
+'ω = √(k/m); T = 2π/ω = 2π√(m/k); f = 1/T',
+'Simple pendulum: T = 2π√(L/g); valid for small angles; independent of mass and amplitude',
+'Energy in SHM: KE = ½mω²(A²−x²); PE = ½mω²x²; Total E = ½mω²A² (constant)',
+'At mean position: KE = max, PE = 0; At extreme: KE = 0, PE = max',
+'Damped oscillation: amplitude decreases exponentially; energy dissipated by friction',
+'Resonance: forced oscillation with driving frequency = natural frequency; amplitude maximum',
+'Superposition of SHM: same frequency → interference; different frequency → beats'
+],
+formula:'x = A sin(ωt+φ)  |  ω = √(k/m)  |  T_pendulum = 2π√(L/g)\nE = ½mω²A²  |  v = ω√(A²−x²)  |  a = −ω²x'},
+{id:'p14', subj:'phy', title:'Waves',
+points:[
+'Wave equation: y = A sin(kx − ωt); k = 2π/λ; ω = 2πf; wave speed v = ω/k = fλ',
+'Speed of sound: v = √(γP/ρ) = √(γRT/M); increases with temperature; in solids > liquids > gases',
+'Intensity: I ∝ A²; I ∝ 1/r²; decibel: L = 10 log(I/I₀); I₀ = 10⁻¹² W/m²',
+'Superposition principle: resultant displacement = algebraic sum of individual displacements',
+'Standing waves: y = 2A sin(kx) cos(ωt); nodes (zero amplitude), antinodes (maximum amplitude)',
+'String harmonics: f_n = nv/2L; n = 1,2,3...; fundamental f₁ = v/2L',
+'Open pipe: f_n = nv/2L; Closed pipe: f_n = (2n−1)v/4L; only odd harmonics',
+'Doppler effect: f\' = f(v±v_obs)/(v∓v_source); (+) for approach, (−) for recession'
+],
+formula:'v = fλ  |  v_sound = √(γRT/M)  |  f_string = nv/2L\nDoppler: f\' = f(v+v_o)/(v−v_s)  |  I ∝ A²  |  β = 10 log(I/I₀)'},
+{id:'p15', subj:'phy', title:'Electric Charges and Fields',
+points:[
+'Coulomb\'s law: F = kq₁q₂/r²; k = 9×10⁹ N·m²/C²; k = 1/4πε₀',
+'Electric field: E = F/q₀ = kQ/r²; direction from +ve charge outward; superposition applies',
+'Electric dipole: p = qd (from −q to +q); torque τ = p×E = pE sinθ; PE = −p·E = −pE cosθ',
+'Gauss\'s law: φ = q_enc/ε₀; closed surface; E·A·cosθ = Q_enc/ε₀',
+'Electric field due to infinite sheet: E = σ/2ε₀; due to conductor surface: E = σ/ε₀',
+'Electric field inside conductor = 0; all charge on outer surface; cavity with charge: inner surface has −Q',
+'Dipole field along axis (end-on): E = 2kp/r³; along equator (broad-on): E = kp/r³; direction opposite',
+'Electric flux: φ = ∫E·dA; through closed surface = q_enc/ε₀; zero if no charge inside'
+],
+formula:'F = kq₁q₂/r²  |  E = kQ/r²  |  φ = Q/ε₀ (Gauss)\nτ = pE sinθ  |  E_sheet = σ/2ε₀  |  k = 9×10⁹ N·m²/C²'},
+{id:'p16', subj:'phy', title:'Electrostatic Potential and Capacitance',
+points:[
+'Electric potential: V = kQ/r; scalar; V = 0 at infinity; work done W = q(V₂−V₁) = qΔV',
+'Equipotential surfaces: no work done moving charge; perpendicular to electric field lines',
+'Relation: E = −dV/dr; E = −∇V; electric field points from high to low potential',
+'Capacitance: C = Q/V; parallel plate: C = ε₀A/d; with dielectric: C = Kε₀A/d',
+'Capacitors in series: 1/C = 1/C₁ + 1/C₂ + ...; in parallel: C = C₁ + C₂ + ...',
+'Energy stored: U = ½CV² = Q²/2C = QV/2; energy density = ½ε₀E²',
+'Van de Graaff generator: accumulates large charge; electrostatic induction on hollow sphere',
+'Dielectric polarisation: induced dipoles partially cancel external field; reduces effective E inside'
+],
+formula:'V = kQ/r  |  C = Q/V = ε₀A/d  |  U = ½CV²\nE = −dV/dr  |  Series: 1/C = Σ1/Cᵢ  |  Parallel: C = ΣCᵢ'},
+{id:'p17', subj:'phy', title:'Current Electricity',
+points:[
+'Current I = Q/t = nAev_d; drift velocity v_d = eEτ/m; conductivity σ = ne²τ/m',
+'Ohm\'s law: V = IR; R = ρL/A; resistivity ρ = 1/σ; increases with temperature for metals',
+'Kirchhoff\'s laws: KCL (junction: ΣI = 0); KVL (loop: ΣV = 0)',
+'EMF (ε): terminal voltage V = ε − Ir (during discharge); V = ε + Ir (during charging)',
+'Resistors in series: R = R₁ + R₂; in parallel: 1/R = 1/R₁ + 1/R₂; power P = I²R = V²/R = VI',
+'Wheatstone bridge: balanced if P/Q = R/S; no current through galvanometer',
+'Potentiometer: measures EMF without drawing current; principle of null point',
+'Meter bridge: R/S = l/(100−l); based on Wheatstone bridge principle'
+],
+formula:'V = IR  |  P = I²R = V²/R  |  R = ρL/A\nKCL: ΣI = 0  |  KVL: ΣV = 0  |  v_d = eEτ/m  |  EMF: V = ε−Ir'},
+{id:'p18', subj:'phy', title:'Moving Charges and Magnetism',
+points:[
+'Magnetic force: F = qv×B = qvB sinθ; on current: F = IL×B = BIL sinθ',
+'Circular motion of charge: r = mv/qB; T = 2πm/qB (independent of v); ω = qB/m',
+'Biot-Savart law: dB = μ₀I dl×r̂/4πr²; B at centre of circular loop = μ₀I/2R',
+'Ampere\'s law: ∮B·dl = μ₀I_enc; for infinite wire: B = μ₀I/2πr',
+'Solenoid: B = μ₀nI (inside, uniform); toroid: B = μ₀NI/2πr; B = 0 outside',
+'Galvanometer to ammeter: low resistance shunt S = IgG/(I−Ig) in parallel',
+'Galvanometer to voltmeter: high resistance R = (V/Ig) − G in series',
+'Cyclotron: charged particle accelerated; resonance condition ω = qB/m; K_max = q²B²R²/2m'
+],
+formula:'F = qvB sinθ  |  r = mv/qB  |  B_wire = μ₀I/2πr\nB_solenoid = μ₀nI  |  B_loop = μ₀I/2R  |  F = BIL sinθ'},
+{id:'p19', subj:'phy', title:'Magnetism and Matter',
+points:[
+'Magnetic dipole moment: m = NIA; torque τ = m×B = mB sinθ; PE = −m·B = −mB cosθ',
+'Bar magnet analogy with solenoid; field on axial point = μ₀2m/4πr³; equatorial = μ₀m/4πr³',
+'Gauss\'s law for magnetism: ∮B·dA = 0; no magnetic monopoles',
+'Diamagnetic: slightly repelled (χ < 0); Paramagnetic: slightly attracted (0 < χ < 1); Ferromagnetic: strongly attracted',
+'Curie\'s law (paramagnetic): χ = C/T; above Curie temperature Tc, ferromagnetic → paramagnetic',
+'Hysteresis loop: B vs H; area = energy loss per cycle; retentivity (Br), coercivity (Hc)',
+'Earth\'s magnetic field: Horizontal component BH, Vertical component BV; dip angle (δ) = arctan(BV/BH)',
+'Magnetic susceptibility χ = M/H; permeability μ = μ₀(1 + χ); μr = μ/μ₀'
+],
+formula:'m = NIA  |  τ = mB sinθ  |  B_axial = μ₀·2m/4πr³\nCurie: χ = C/T  |  B_equatorial = μ₀m/4πr³  |  tan δ = BV/BH'},
+{id:'p20', subj:'phy', title:'Electromagnetic Induction',
+points:[
+'Faraday\'s law: ε = −dΦ/dt; Φ = NBA cosθ; EMF induced whenever flux changes',
+'Lenz\'s law: induced current opposes the change in flux causing it (conservation of energy)',
+'Motional EMF: ε = Bvl; rod moving in magnetic field; power = B²v²l²/R',
+'Self-induction: ε = −L(dI/dt); L = μ₀n²V (solenoid); energy = ½LI²',
+'Mutual induction: ε₂ = −M(dI₁/dt); M = μ₀n₁n₂V (coaxial solenoids); M ≤ √(L₁L₂)',
+'Transformer: V₁/V₂ = N₁/N₂ = I₂/I₁; ideal: P₁ = P₂; step-up (N₂>N₁), step-down (N₂<N₁)',
+'Eddy currents: induced in bulk conductors; cause heating (induction cooker); reduced by lamination',
+'AC generator: rotating coil in magnetic field; ε = NBAω sin(ωt) = ε₀ sin(ωt)'
+],
+formula:'ε = −dΦ/dt  |  ε = Bvl  |  U_L = ½LI²\nV₁/V₂ = N₁/N₂  |  M ≤ √(L₁L₂)  |  L_solenoid = μ₀n²Al'},
+{id:'p21', subj:'phy', title:'Alternating Current',
+points:[
+'AC: V = V₀ sinωt; I = I₀ sin(ωt + φ); V_rms = V₀/√2; I_rms = I₀/√2',
+'Resistor (AC): V and I in phase; P = I_rms²R; Capacitor: I leads V by 90°; Inductor: I lags V by 90°',
+'Reactance: X_L = ωL; X_C = 1/ωC; Impedance Z = √(R² + (X_L − X_C)²)',
+'Series LCR circuit: tan φ = (X_L − X_C)/R; resonance when X_L = X_C → ω₀ = 1/√(LC)',
+'Resonant frequency: f₀ = 1/(2π√LC); at resonance Z = R (minimum), I = maximum',
+'Q-factor = ω₀L/R = 1/(ω₀CR) = (1/R)√(L/C); sharpness of resonance',
+'Power: P = V_rms I_rms cosφ; power factor cosφ = R/Z; pure L or C: cosφ = 0, P = 0',
+'Wattless current: component of current 90° out of phase; does no work'
+],
+formula:'Z = √(R²+(XL−XC)²)  |  ω₀ = 1/√LC  |  Q = ω₀L/R\nV_rms = V₀/√2  |  P = Vrms·Irms·cosφ  |  XL = ωL, XC = 1/ωC'},
+{id:'p22', subj:'phy', title:'Electromagnetic Waves',
+points:[
+'Displacement current: Id = ε₀ dΦE/dt; Maxwell\'s modification to Ampere\'s law; completes symmetry',
+'EM waves: transverse; E and B perpendicular to each other and to direction of propagation',
+'Speed: c = 1/√(μ₀ε₀) = 3×10⁸ m/s; E₀/B₀ = c; in medium v = c/n',
+'EM spectrum (λ increasing): γ-rays → X-rays → UV → visible (400-700nm) → IR → microwaves → radio waves',
+'Intensity: I = ½ε₀E₀²c = ½B₀²c/μ₀ = E₀B₀/2μ₀; average energy density = ½ε₀E₀²',
+'Radiation pressure: P = I/c (absorbed); P = 2I/c (reflected perfectly)',
+'Applications: X-rays (medical imaging), UV (sterilisation), IR (heat sensors, remote), microwave (RADAR, cooking)',
+'LASER light: coherent, monochromatic, highly directional; used in eye surgery, CD readers'
+],
+formula:'c = 1/√(μ₀ε₀) = 3×10⁸ m/s  |  E₀/B₀ = c  |  I = E₀B₀/2μ₀\nId = ε₀ dΦE/dt  |  I = cε₀E₀²/2'},
+{id:'p23', subj:'phy', title:'Ray Optics and Optical Instruments',
+points:[
+'Snell\'s law: n₁ sinθ₁ = n₂ sinθ₂; n = c/v; denser medium = slower speed, larger n',
+'Total internal reflection: θ ≥ θ_c; sin θ_c = n₂/n₁; n₁ > n₂; applications: optical fibre, mirage, diamonds',
+'Mirrors: 1/v + 1/u = 1/f = 2/R; m = −v/u; sign convention: distances measured from pole',
+'Lenses: 1/v − 1/u = 1/f; Lens maker\'s equation: 1/f = (n−1)(1/R₁ − 1/R₂); m = v/u',
+'Lens power: P = 1/f (in metres); unit = dioptre (D); P = P₁ + P₂ for combination',
+'Prism: δ = (i + e) − A; at min deviation: i = e, r₁ = r₂ = A/2; n = sin((A+δm)/2)/sin(A/2)',
+'Microscope: magnification M = (L/f_e)(D/f_o); telescope (astronomical): M = f_o/f_e',
+'Resolving power: microscope R.P. = 2n sinθ/λ; telescope R.P. = D/1.22λ; angular limit = 1.22λ/D'
+],
+formula:'1/v + 1/u = 1/f  |  n₁sinθ₁ = n₂sinθ₂  |  P = 1/f\nsinθc = n₂/n₁  |  Lens maker: 1/f = (n−1)(1/R₁−1/R₂)'},
+{id:'p24', subj:'phy', title:'Wave Optics',
+points:[
+'Huygens\' principle: every point on a wavefront is source of secondary wavelets; envelope = new wavefront',
+'Young\'s double slit experiment: path difference Δ = dsinθ ≈ dy/D; bright: Δ = nλ; dark: Δ = (n+½)λ',
+'Fringe width: β = λD/d; fringe width ∝ λ and D; inversely ∝ d',
+'Coherent sources: same frequency, constant phase difference; required for stable interference',
+'Diffraction (single slit): central maximum; minima at a sinθ = nλ; width of central max = 2λD/a',
+'Condition for diffraction: obstacle/slit size ≈ wavelength of light',
+'Polarisation: transverse nature of light confirmed; Malus\'s law: I = I₀ cos²θ',
+'Brewster\'s law: tan i_p = n; at polarising angle, reflected ray is completely polarised'
+],
+formula:'β = λD/d  |  Δ = dy/D  |  Malus: I = I₀cos²θ\nBrewster: tan(ip) = n  |  Single slit minima: a sinθ = nλ'},
+{id:'p25', subj:'phy', title:'Dual Nature of Radiation and Matter',
+points:[
+'Photoelectric effect: Einstein (1905); photons; KE_max = hν − φ = hν − hν₀ (threshold frequency ν₀)',
+'Stopping potential: eV₀ = KE_max = h(ν − ν₀); V₀ ∝ frequency, independent of intensity',
+'Work function φ = hν₀; h = 6.626×10⁻³⁴ J·s; eV₀ = hν − φ',
+'de Broglie wavelength: λ = h/p = h/mv = h/√(2mKE) = h/√(2meV)',
+'Davisson-Germer experiment: electron diffraction confirmed de Broglie hypothesis',
+'Photoelectric effect: current ∝ intensity (more photons); max KE ∝ frequency; independent of intensity',
+'Photon: E = hν = hc/λ; p = h/λ = E/c; mass = 0 (rest mass); no charge',
+'Electron microscope: uses de Broglie wavelength of electrons (much smaller than light); high resolution'
+],
+formula:'KE_max = hν − φ  |  eV₀ = hν − hν₀  |  λ = h/mv\nE = hν  |  p_photon = h/λ = E/c  |  h = 6.626×10⁻³⁴ J·s'},
+{id:'p26', subj:'phy', title:'Atoms',
+points:[
+'Bohr model: electrons in stationary orbits; angular momentum = nh/2π; energy quantised',
+'Energy levels of H atom: Eₙ = −13.6/n² eV; ground state (n=1) = −13.6 eV; ionisation energy = 13.6 eV',
+'Orbit radius: rₙ = 0.529n² Å (Bohr radius a₀ = 0.529 Å for n=1)',
+'Spectral series: Lyman (UV, n_f=1), Balmer (visible, n_f=2), Paschen (IR, n_f=3), Brackett (n_f=4), Pfund (n_f=5)',
+'Wave number: 1/λ = R_H(1/n₁² − 1/n₂²); R_H = 1.097×10⁷ m⁻¹ (Rydberg constant)',
+'Limitations of Bohr: doesn\'t explain multi-electron atoms, Zeeman effect, fine structure, wave nature of electron',
+'Hydrogen spectrum: first line of Balmer series (Hα): n₂=3 to n₁=2; wavelength ≈ 656 nm (red)',
+'Ionisation energy: energy needed to remove electron from ground state; H = 13.6 eV'
+],
+formula:'Eₙ = −13.6/n² eV  |  rₙ = 0.529n² Å  |  1/λ = R(1/n₁²−1/n₂²)\nangular momentum: L = nh/2π  |  R_H = 1.097×10⁷ m⁻¹'},
+{id:'p27', subj:'phy', title:'Nuclei',
+points:[
+'Nucleus: protons + neutrons (nucleons); radius R = R₀A^(1/3); R₀ = 1.2×10⁻¹⁵ m = 1.2 fm',
+'Binding energy: BE = Δmc²; mass defect Δm = (Z·mₚ + N·mₙ) − M_nucleus',
+'Binding energy per nucleon (BEPN): peaks at Fe-56 (≈ 8.8 MeV/nucleon); fusion and fission both release energy',
+'Radioactive decay: N = N₀e^(−λt); λ = decay constant; t½ = 0.693/λ; mean life τ = 1/λ',
+'Alpha decay: A decreases by 4, Z decreases by 2; Beta decay: Z changes by 1; Gamma: no change in A or Z',
+'Nuclear fission: U-235 + n → Ba + Kr + 3n + 200 MeV; chain reaction; controlled in reactor',
+'Nuclear fusion: H + H → He; releases more energy/mass than fission; powers stars; requires 10⁷ K',
+'Q-value: energy released in nuclear reaction; Q = (reactant mass − product mass)c²; positive → exothermic'
+],
+formula:'R = R₀A^(1/3)  |  N = N₀e^(−λt)  |  t½ = 0.693/λ\nBE = Δmc²  |  Δm = Z·mH + N·mn − M  |  1 u = 931.5 MeV'},
+{id:'p28', subj:'phy', title:'Semiconductor Electronics',
+points:[
+'Energy bands: conduction band, valence band, band gap; conductor (overlap), semiconductor (small gap ≈ 1 eV), insulator (large gap > 3 eV)',
+'Intrinsic semiconductor: pure Si/Ge; nᵢ² = nₑ × nₕ; at room temp: nₑ = nₕ = nᵢ',
+'n-type: donor impurity (P, As → extra electron); Fermi level shifts toward conduction band',
+'p-type: acceptor impurity (B, Al → hole); Fermi level shifts toward valence band',
+'p-n junction diode: depletion region; forward bias (barrier reduced, conducts); reverse bias (barrier increased, no conduction)',
+'Half-wave rectifier: 1 diode; full-wave: 2 diodes (centre tap) or 4 diodes (bridge)',
+'Transistor: emitter-base-collector; npn or pnp; β = Ic/Ib (current gain); amplifier or switch',
+'Logic gates: AND, OR, NOT, NAND, NOR, XOR; NAND and NOR are universal gates'
+]},
+{id:'p29', subj:'phy', title:'Communication Systems',
+points:[
+'Communication system: transmitter + channel + receiver; modulation needed for efficient transmission',
+'Bandwidth of signal: speech (300-3100 Hz), music (20 Hz-20 kHz), video (4.2 MHz)',
+'Modulation: AM (amplitude), FM (frequency), PM (phase); FM better quality, less noise',
+'AM: carrier wave modulated by signal; bandwidth = 2 × signal frequency; simple detection',
+'FM: frequency of carrier varies; bandwidth = 2(Δf + f_m); better noise immunity; used in radio broadcasting',
+'Space communication: sky wave (ionosphere reflection; 1500-40,000 kHz); ground wave (< 500 kHz); line of sight (microwave)',
+'Satellite communication: geostationary (36,000 km); footprint = area covered',
+'Range of TV tower: d = √(2Rh); R = Earth\'s radius; h = height of antenna'
+],
+formula:'d = √(2Rh)  |  AM bandwidth = 2fm  |  FM bandwidth = 2(Δf + fm)\nμ = Am/Ac (modulation index)  |  SNR improved by FM'}
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let currentTab = 'bio';
+let flagged = JSON.parse(localStorage.getItem('fc_flagged') || '{}');
+let opened = JSON.parse(localStorage.getItem('fc_opened') || '{}');
+
+function saveState(){
+localStorage.setItem('fc_flagged', JSON.stringify(flagged));
+localStorage.setItem('fc_opened', JSON.stringify(opened));
+}
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+function setTab(tab){
+currentTab = tab;
+document.querySelectorAll('.tab').forEach(t => {
+t.className = 'tab';
+});
+const tabEl = document.querySelector(`[data-tab="${tab}"]`);
+if(tab==='bio') tabEl.classList.add('active-bio');
+else if(tab==='chem') tabEl.classList.add('active-chem');
+else if(tab==='phy') tabEl.classList.add('active-phy');
+else tabEl.classList.add('active-weak');
+renderCards();
+}
+
+function getFilteredChapters(){
+const search = document.getElementById('searchInput').value.toLowerCase().trim();
+let list = chapters;
+if(currentTab === 'weak'){
+list = list.filter(c => flagged[c.id]);
+} else {
+list = list.filter(c => c.subj === currentTab);
+}
+if(search){
+list = list.filter(c => c.title.toLowerCase().includes(search) ||
+c.points.some(p => p.toLowerCase().includes(search)));
+}
+return list;
+}
+
+function renderCards(){
+const list = getFilteredChapters();
+const container = document.getElementById('clist');
+const empty = document.getElementById('emptyState');
+updateStats();
+if(list.length === 0){
+container.innerHTML = '';
+empty.style.display = 'block';
+return;
+}
+empty.style.display = 'none';
+container.innerHTML = list.map(c => buildCard(c)).join('');
+// re-attach open state
+list.forEach(c => {
+if(opened[c.id]){
+const body = document.getElementById('body-'+c.id);
+if(body) body.classList.add('open');
+}
+});
+}
+
+function buildCard(c){
+const isFlagged = flagged[c.id];
+const subjLabel = c.subj === 'bio' ? 'Biology' : c.subj === 'chem' ? 'Chemistry' : 'Physics';
+const dotClass = `${c.subj}-dot`;
+const subjClass = `subj-${c.subj}`;
+const formulaHtml = c.formula ? `<div class="fc-formula">${c.formula.replace(/\n/g,'<br>')}</div>` : '';
+return `
+<div class="fc${isFlagged?' flagged':''}" id="fc-${c.id}">
+  <div class="fc-head" onclick="toggleCard('${c.id}')">
+    <div class="fc-meta">
+      <span class="fc-num">#${c.id.replace('b','BIO-').replace('c','CHEM-').replace('p','PHY-')}</span>
+      <span class="fc-subj ${subjClass}">${subjLabel}</span>
+    </div>
+    <div class="fc-actions">
+      <button class="flag-btn" onclick="event.stopPropagation();toggleFlag('${c.id}')" title="Flag as weak">
+        ${isFlagged ? '🔴' : '⚪'}
+      </button>
+      <button class="toggle-btn" onclick="event.stopPropagation();toggleCard('${c.id}')">
+        ${opened[c.id] ? 'CLOSE' : 'OPEN'}
+      </button>
+    </div>
+  </div>
+  <div class="fc-title" onclick="toggleCard('${c.id}')">${c.title}</div>
+  <div class="fc-divider"></div>
+  <div class="fc-body${opened[c.id]?' open':''}" id="body-${c.id}">
+    <ul class="fc-points ${dotClass}">
+      ${c.points.map(p=>`<li>${p}</li>`).join('')}
+    </ul>
+    ${formulaHtml}
+  </div>
+</div>`;
+}
+
+function toggleCard(id){
+opened[id] = !opened[id];
+saveState();
+const body = document.getElementById('body-'+id);
+const btn = body?.closest('.fc')?.querySelector('.toggle-btn');
+if(body){
+body.classList.toggle('open', opened[id]);
+if(btn) btn.textContent = opened[id] ? 'CLOSE' : 'OPEN';
+}
+updateStats();
+}
+
+function toggleFlag(id){
+flagged[id] = !flagged[id];
+const fc = document.getElementById('fc-'+id);
+const btn = fc?.querySelector('.flag-btn');
+if(fc) fc.classList.toggle('flagged', flagged[id]);
+if(btn) btn.textContent = flagged[id] ? '🔴' : '⚪';
+saveState();
+updateStats();
+if(currentTab==='weak' && !flagged[id]){
+setTimeout(()=>renderCards(),300);
+}
+}
+
+function updateStats(){
+const total = chapters.length;
+const weak = Object.values(flagged).filter(Boolean).length;
+const op = Object.values(opened).filter(Boolean).length;
+document.getElementById('totalCards').textContent = total;
+document.getElementById('weakCount').textContent = weak;
+document.getElementById('openCount').textContent = op;
+}
+
+// init
+renderCards();
+</script>
+</body>
+</html>
