@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nishant — NEET 2027 Yearly Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Quicksand:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#05070f;--card:#0b0f1c;--card2:#101524;--border:#1a2238;--text:#e8edf8;--muted:#5a6a8a;--faint:#1e2840;--purple:#a855f7;--cyan:#06b6d4;--pink:#ec4899;--gold:#f59e0b;--green:#10b981;--blue:#3b82f6;--orange:#f97316;--bio:#10b981;--chem:#f97316;--phy:#3b82f6;--gp:linear-gradient(135deg,#a855f7,#06b6d4);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Quicksand',sans-serif;min-height:100vh;overflow-x:hidden;}
+.bgc{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.orb{position:absolute;border-radius:50%;filter:blur(100px);animation:of 10s ease-in-out infinite alternate;}
+.o1{width:600px;height:600px;background:rgba(168,85,247,.06);top:-150px;left:-150px;}
+.o2{width:400px;height:400px;background:rgba(6,182,212,.05);bottom:-100px;right:-100px;animation-delay:3s;}
+.o3{width:300px;height:300px;background:rgba(236,72,153,.04);top:50%;left:50%;animation-delay:6s;}
+@keyframes of{from{transform:translate(0,0)scale(1);}to{transform:translate(40px,30px)scale(1.15);}}
+.gl{position:fixed;inset:0;background-image:linear-gradient(rgba(168,85,247,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.02) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;}
+.page{max-width:700px;margin:0 auto;padding:20px 14px 100px;position:relative;z-index:1;}
+/* NAV */
+.nav{display:flex;gap:5px;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:5px;margin-bottom:14px;position:sticky;top:8px;z-index:50;backdrop-filter:blur(20px);}
+.nb{flex:1;padding:8px 4px;border:none;background:transparent;color:var(--muted);font-family:'Quicksand',sans-serif;font-size:10px;font-weight:700;border-radius:12px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.nb.active{background:var(--gp);color:#fff;box-shadow:0 2px 12px rgba(168,85,247,.3);}
+.tab{display:none;animation:fu .4s ease both;}
+.tab.active{display:block;}
+@keyframes fu{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+/* HERO */
+.hero{position:relative;border-radius:26px;padding:22px 20px 18px;margin-bottom:14px;overflow:hidden;background:linear-gradient(135deg,#080318,#0d0a28,#080f22);}
+.hbrd{position:absolute;inset:-1px;border-radius:26px;background:linear-gradient(135deg,#a855f7,#06b6d4,#ec4899,#f59e0b,#a855f7);background-size:400% 400%;animation:bs 5s linear infinite;z-index:-1;opacity:.5;}
+.hbg{position:absolute;inset:1px;border-radius:25px;background:linear-gradient(135deg,#080318,#0d0a28,#080f22);z-index:-1;}
+.hsh{position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.03) 50%,transparent 65%);background-size:200% 100%;animation:sh 4s ease infinite;pointer-events:none;}
+@keyframes bs{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+@keyframes sh{from{background-position:-200% 0;}to{background-position:200% 0;}}
+.htop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.ey{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--purple);margin-bottom:5px;display:flex;align-items:center;gap:6px;}
+.ld{width:6px;height:6px;background:var(--green);border-radius:50%;animation:lp 1.5s ease infinite;box-shadow:0 0 8px var(--green);}
+@keyframes lp{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.3;transform:scale(.7);}}
+.hn{font-family:'Nunito',sans-serif;font-size:clamp(30px,8vw,48px);font-weight:900;line-height:1;background:linear-gradient(135deg,#fff,#a855f7,#06b6d4,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:300% auto;animation:ns 5s linear infinite;letter-spacing:-.02em;}
+@keyframes ns{from{background-position:0%;}to{background-position:300%;}}
+.hs{font-size:11px;color:var(--muted);margin-top:3px;font-weight:600;}
+.hbdgs{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px;}
+.hb{font-size:9px;font-weight:700;padding:3px 8px;border-radius:7px;}
+.hb1{background:rgba(249,115,22,.1);color:var(--orange);border:1px solid rgba(249,115,22,.2);}
+.hb2{background:rgba(168,85,247,.1);color:var(--purple);border:1px solid rgba(168,85,247,.2);}
+.hb3{background:rgba(16,185,129,.08);color:var(--green);border:1px solid rgba(16,185,129,.2);}
+.tga{display:inline-flex;align-items:center;gap:7px;background:rgba(6,182,212,.07);border:1px solid rgba(6,182,212,.2);border-radius:11px;padding:7px 11px;text-decoration:none;margin-top:10px;}
+.tga:active{transform:scale(.96);}
+.tgl{font-family:'Space Mono',monospace;font-size:8px;color:rgba(6,182,212,.6);letter-spacing:.1em;text-transform:uppercase;}
+.tgh{font-size:12px;font-weight:700;color:var(--cyan);}
+.hr{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;}
+.clk{background:rgba(0,0,0,.5);border:1px solid rgba(168,85,247,.2);border-radius:14px;padding:9px 12px;text-align:center;min-width:100px;}
+.clkt{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:var(--cyan);line-height:1;text-shadow:0 0 12px rgba(6,182,212,.5);letter-spacing:.04em;}
+.clkd{font-family:'Space Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px;}
+.cdt{background:rgba(0,0,0,.4);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:8px 10px;text-align:center;}
+.cdtl{font-family:'Space Mono',monospace;font-size:7px;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+.cdtr{display:flex;gap:4px;justify-content:center;align-items:flex-start;}
+.cdtu{text-align:center;}
+.cdtn{font-family:'Nunito',sans-serif;font-size:16px;font-weight:900;color:var(--gold);line-height:1;text-shadow:0 0 8px rgba(245,158,11,.4);}
+.cdts{font-family:'Space Mono',monospace;font-size:6px;color:var(--muted);}
+.cdtsep{font-family:'Nunito',sans-serif;font-size:16px;font-weight:900;color:var(--gold);opacity:.4;}
+/* OVERVIEW */
+.s4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+.s4c{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px 8px;text-align:center;}
+.s4v{font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;line-height:1;margin-bottom:2px;}
+.s4l{font-size:9px;color:var(--muted);font-weight:600;}
+.srings{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
+.sr{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:14px 10px;text-align:center;}
+.sr svg{display:block;margin:0 auto;}
+.srp{font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;margin:3px 0 2px;}
+.srn{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+.srd{font-size:10px;color:var(--muted);margin-top:1px;}
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:22px;margin-bottom:12px;overflow:hidden;}
+.ch{display:flex;align-items:center;gap:12px;padding:13px 16px 11px;border-bottom:1px solid var(--border);background:var(--card2);}
+.ci2{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.cm{flex:1;}
+.ct{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text);margin-bottom:1px;}
+.cs{font-size:11px;color:var(--muted);}
+.cb2{padding:14px 16px;}
+.barchart{display:flex;flex-direction:column;gap:10px;}
+.bcr{display:flex;align-items:center;gap:10px;}
+.bcl{font-size:11px;font-weight:600;width:36px;flex-shrink:0;text-align:right;}
+.bct{flex:1;height:8px;background:var(--faint);border-radius:100px;overflow:hidden;}
+.bcf{height:100%;border-radius:100px;transition:width .8s ease;}
+.bcv{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);width:36px;flex-shrink:0;}
+/* CHAPTER TRACKER */
+.macc{margin-bottom:10px;border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.mh{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;cursor:pointer;background:var(--card2);user-select:none;-webkit-tap-highlight-color:transparent;}
+.mh:active{background:var(--card);}
+.ml2{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
+.mn{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);background:var(--faint);padding:2px 7px;border-radius:5px;white-space:nowrap;flex-shrink:0;}
+.mname{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mr2{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.mpb{width:60px;height:5px;background:var(--faint);border-radius:100px;overflow:hidden;}
+.mpbf{height:100%;background:var(--gp);border-radius:100px;transition:width .4s ease;}
+.mpp{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);min-width:28px;text-align:right;}
+.mchev{font-size:10px;color:var(--muted);transition:transform .3s;}
+.macc.open .mchev{transform:rotate(180deg);}
+.mbody{display:none;padding:12px 14px;}
+.macc.open .mbody{display:block;}
+.srow{margin-bottom:12px;}
+.srow:last-child{margin-bottom:0;}
+.slbl{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;margin-bottom:7px;}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.slbl::after{content:'';flex:1;height:1px;background:var(--border);}
+.chips{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:11px;font-weight:600;color:var(--muted);transition:all .2s;font-family:'Quicksand',sans-serif;-webkit-tap-highlight-color:transparent;}
+.chip:active{transform:scale(.95);}
+.chip.done{border-color:transparent;}
+.ckk{width:13px;height:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;flex-shrink:0;opacity:0;transition:opacity .2s;}
+.chip.done .ckk{opacity:1;}
+.bc.done{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.25);color:var(--bio);}
+.bc .ckk{background:var(--bio);color:#000;}
+.cc.done{background:rgba(249,115,22,.12);border-color:rgba(249,115,22,.25);color:var(--chem);}
+.cc .ckk{background:var(--chem);color:#000;}
+.pc.done{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.25);color:var(--phy);}
+.pc .ckk{background:var(--phy);color:#fff;}
+/* GOALS */
+.ggrid{display:grid;gap:10px;}
+.gc{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:12px 14px;}
+.gm{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--text);margin-bottom:9px;}
+.ginps{display:grid;gap:6px;}
+.giw{display:flex;align-items:center;gap:8px;}
+.gst{font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px;letter-spacing:.03em;white-space:nowrap;flex-shrink:0;width:36px;text-align:center;}
+.gi{flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:600;color:var(--text);outline:none;transition:border .2s;}
+.gi:focus{border-color:rgba(168,85,247,.4);}
+.gi::placeholder{color:var(--faint);}
+/* MOCKS */
+.mgrid{display:grid;gap:10px;}
+.mcard{background:var(--card2);border:1px solid var(--border);border-radius:16px;padding:13px 14px;}
+.mctop{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.mcnum{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text);}
+.mdi{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:5px 9px;font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);outline:none;}
+.mscores{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
+.msi{text-align:center;}
+.msil{font-size:8px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+.msinp{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:7px 4px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;color:var(--text);text-align:center;outline:none;transition:all .2s;}
+.msinp:focus{border-color:rgba(168,85,247,.4);}
+.msinp::placeholder{color:var(--faint);font-size:12px;}
+.mtbar{margin-top:10px;height:5px;background:var(--faint);border-radius:100px;overflow:hidden;}
+.mtbf{height:100%;border-radius:100px;transition:width .5s ease;}
+.mtlbl{display:flex;justify-content:space-between;margin-top:5px;}
+.mtv{font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;}
+.mtr{font-size:10px;color:var(--muted);}
+.addbtn{width:100%;padding:12px;background:transparent;border:1.5px dashed var(--border);border-radius:14px;color:var(--muted);font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:10px;}
+.addbtn:active{background:var(--card2);}
+/* SCORE CHART */
+.cwrap{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;}
+.ctitle{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--text);margin-bottom:10px;}
+.schart{display:flex;align-items:flex-end;gap:6px;height:100px;padding:0 4px;}
+.sbw{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.sb{width:100%;border-radius:4px 4px 0 0;min-height:3px;transition:height .6s ease;}
+.sbl{font-family:'Space Mono',monospace;font-size:7px;color:var(--muted);text-align:center;}
+.sbv{font-family:'Nunito',sans-serif;font-size:9px;font-weight:700;color:var(--muted);}
+.leg{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;}
+.li{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);font-weight:600;}
+.ld2{width:8px;height:8px;border-radius:50%;}
+/* TIMELINE */
+.tl{display:flex;flex-direction:column;}
+.tli{display:flex;gap:12px;padding-bottom:14px;}
+.tli:last-child{padding-bottom:0;}
+.tll{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:30px;}
+.tldot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;border:2px solid var(--border);}
+.tldot.done{background:var(--gp);border-color:transparent;box-shadow:0 0 10px rgba(168,85,247,.4);}
+.tldot.current{background:rgba(168,85,247,.15);border-color:var(--purple);box-shadow:0 0 10px rgba(168,85,247,.3);}
+.tlline{width:2px;flex:1;background:var(--border);margin-top:3px;min-height:16px;}
+.tlr{flex:1;padding-top:3px;}
+.tlp{font-family:'Space Mono',monospace;font-size:9px;color:var(--purple);letter-spacing:.04em;margin-bottom:2px;}
+.tlt{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--text);margin-bottom:2px;}
+.tld{font-size:11px;color:var(--muted);line-height:1.5;}
+/* MODAL */
+.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(10px);}
+.mov.show{display:flex;}
+.mbox{background:var(--card);border:1px solid rgba(168,85,247,.3);border-radius:24px;padding:26px 20px 20px;max-width:290px;width:100%;text-align:center;animation:pop .3s cubic-bezier(.175,.885,.32,1.275) both;box-shadow:0 0 60px rgba(168,85,247,.15);}
+@keyframes pop{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
+.me{font-size:32px;margin-bottom:9px;}
+.mt2{font-family:'Nunito',sans-serif;font-size:19px;font-weight:900;color:var(--text);margin-bottom:7px;}
+.ms{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.5;}
+.mbtns{display:flex;gap:10px;}
+.mb{flex:1;padding:11px;border-radius:12px;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:none;}
+.mb:active{transform:scale(.96);}
+.mcan{background:var(--card2);color:var(--muted);}
+.mcon{background:var(--gp);color:white;}
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gp);color:white;border-radius:100px;padding:9px 20px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;z-index:400;transition:transform .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;box-shadow:0 4px 20px rgba(168,85,247,.4);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.empty{text-align:center;padding:22px;color:var(--muted);font-size:13px;font-weight:600;}
+.eico{font-size:30px;margin-bottom:7px;}
+input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none;}
+</style>
+</head>
+<body>
+<div class="bgc"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="gl"></div></div>
+<div class="toast" id="toast">✓</div>
+<div class="page">
+<!-- HERO -->
+<div class="hero"><div class="hbrd"></div><div class="hbg"></div><div class="hsh"></div>
+<div class="htop">
+  <div>
+    <div class="ey"><span class="ld"></span>NEET 2027 YEARLY PLANNER</div>
+    <div style="position:relative;margin-bottom:4px;">
+      <input id="uname" maxlength="20" placeholder="Your Name" oninput="saveName(this.value)" style="font-family:'Nunito',sans-serif;font-size:clamp(26px,7vw,42px);font-weight:900;line-height:1;background:transparent;border:none;border-bottom:2px solid rgba(168,85,247,.3);outline:none;color:transparent;background:linear-gradient(135deg,#fff,#a855f7,#06b6d4,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:300% auto;animation:ns 5s linear infinite;letter-spacing:-.02em;width:100%;max-width:260px;padding:2px 0;">
+      <div style="font-family:'Space Mono',monospace;font-size:9px;color:rgba(168,85,247,.5);letter-spacing:.08em;margin-top:3px;">✏️ TAP TO ENTER YOUR NAME</div>
+    </div>
+    <div class="hs">NEET 2027 Aspirant · Yakeen 2.0</div>
+    <div class="hbdgs"><span class="hb hb1">⚡ Yakeen 2.0</span><span class="hb hb2">🔄 Dropper</span><span class="hb hb3">🎯 NEET 2027</span></div>
+    <a href="https://t.me/STICKYBOTS" target="_blank" class="tga"><span style="font-size:15px">✈️</span><div><div class="tgl">Telegram</div><div class="tgh">@STICKYBOTS</div></div></a>
+    <div style="margin-top:12px;font-size:10px;color:rgba(168,85,247,.45);font-family:'Space Mono',monospace;letter-spacing:.06em;">Made with ❤️ by <span style="color:#a855f7;font-weight:700;">Nishant</span></div>
+  </div>
+  <div class="hr">
+    <div class="clk"><div class="clkt" id="clkt">00:00</div><div class="clkd" id="clkd">—</div></div>
+    <div class="cdt">
+      <div class="cdtl">🎯 NEET 2027</div>
+      <div class="cdtr">
+        <div class="cdtu"><div class="cdtn" id="cdd">—</div><div class="cdts">DAYS</div></div>
+        <div class="cdtsep">:</div>
+        <div class="cdtu"><div class="cdtn" id="cdh">—</div><div class="cdts">HRS</div></div>
+        <div class="cdtsep">:</div>
+        <div class="cdtu"><div class="cdtn" id="cdm">—</div><div class="cdts">MIN</div></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+<!-- NAV -->
+<div class="nav">
+  <button class="nb active" onclick="sw('overview',this)">📊 Overview</button>
+  <button class="nb" onclick="sw('chapters',this)">📚 Chapters</button>
+  <button class="nb" onclick="sw('goals',this)">🎯 Goals</button>
+  <button class="nb" onclick="sw('mocks',this)">📝 Mocks</button>
+  <button class="nb" onclick="sw('timeline',this)">🗓️ Phases</button>
+</div>
+<!-- OVERVIEW TAB -->
+<div class="tab active" id="tab-overview">
+  <div class="s4">
+    <div class="s4c"><div class="s4v" id="ov-bio" style="color:var(--bio)">0%</div><div class="s4l">🧬 Bio</div></div>
+    <div class="s4c"><div class="s4v" id="ov-chem" style="color:var(--chem)">0%</div><div class="s4l">⚗️ Chem</div></div>
+    <div class="s4c"><div class="s4v" id="ov-phy" style="color:var(--phy)">0%</div><div class="s4l">⚡ Phy</div></div>
+    <div class="s4c"><div class="s4v" id="ov-tot" style="background:var(--gp);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">0%</div><div class="s4l">📋 Total</div></div>
+  </div>
+  <div class="srings">
+    <div class="sr"><svg width="78" height="78" viewBox="0 0 78 78" style="transform:rotate(-90deg)"><circle cx="39" cy="39" r="30" fill="none" stroke="rgba(16,185,129,.15)" stroke-width="6"/><circle id="br" cx="39" cy="39" r="30" fill="none" stroke="#10b981" stroke-width="6" stroke-linecap="round" stroke-dasharray="188" stroke-dashoffset="188" style="transition:stroke-dashoffset .8s ease"/></svg><div class="srp" style="color:var(--bio)" id="brp">0%</div><div class="srn" style="color:var(--bio)">Biology</div><div class="srd" id="brd">0/38</div></div>
+    <div class="sr"><svg width="78" height="78" viewBox="0 0 78 78" style="transform:rotate(-90deg)"><circle cx="39" cy="39" r="30" fill="none" stroke="rgba(249,115,22,.15)" stroke-width="6"/><circle id="cr" cx="39" cy="39" r="30" fill="none" stroke="#f97316" stroke-width="6" stroke-linecap="round" stroke-dasharray="188" stroke-dashoffset="188" style="transition:stroke-dashoffset .8s ease"/></svg><div class="srp" style="color:var(--chem)" id="crp">0%</div><div class="srn" style="color:var(--chem)">Chemistry</div><div class="srd" id="crd">0/30</div></div>
+    <div class="sr"><svg width="78" height="78" viewBox="0 0 78 78" style="transform:rotate(-90deg)"><circle cx="39" cy="39" r="30" fill="none" stroke="rgba(59,130,246,.15)" stroke-width="6"/><circle id="pr" cx="39" cy="39" r="30" fill="none" stroke="#3b82f6" stroke-width="6" stroke-linecap="round" stroke-dasharray="188" stroke-dashoffset="188" style="transition:stroke-dashoffset .8s ease"/></svg><div class="srp" style="color:var(--phy)" id="prp">0%</div><div class="srn" style="color:var(--phy)">Physics</div><div class="srd" id="prd">0/29</div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ci2" style="background:rgba(168,85,247,.1)">📈</div><div class="cm"><div class="ct">Subject Progress</div><div class="cs">Chapters done vs total</div></div></div>
+    <div class="cb2"><div class="barchart">
+      <div class="bcr"><div class="bcl" style="color:var(--bio)">Bio</div><div class="bct"><div class="bcf" id="bb" style="background:var(--bio);width:0%"></div></div><div class="bcv" id="bbv">0/38</div></div>
+      <div class="bcr"><div class="bcl" style="color:var(--chem)">Chem</div><div class="bct"><div class="bcf" id="cb" style="background:var(--chem);width:0%"></div></div><div class="bcv" id="cbv">0/30</div></div>
+      <div class="bcr"><div class="bcl" style="color:var(--phy)">Phy</div><div class="bct"><div class="bcf" id="pb" style="background:var(--phy);width:0%"></div></div><div class="bcv" id="pbv">0/29</div></div>
+    </div></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ci2" style="background:rgba(245,158,11,.1)">📝</div><div class="cm"><div class="ct">Mock Test Trend</div><div class="cs">Your score trajectory</div></div></div>
+    <div class="cb2"><div id="schartwrap"><div class="empty"><div class="eico">📊</div>Add mock scores in the Mocks tab to see trend.</div></div></div>
+  </div>
+</div>
+<!-- CHAPTERS TAB -->
+<div class="tab" id="tab-chapters"><div id="chcon"></div></div>
+<!-- GOALS TAB -->
+<div class="tab" id="tab-goals">
+  <div class="card">
+    <div class="ch"><div class="ci2" style="background:rgba(16,185,129,.1)">🎯</div><div class="cm"><div class="ct">Monthly Goals</div><div class="cs">Set your targets per subject each month</div></div></div>
+    <div class="cb2" style="padding:12px"><div class="ggrid" id="gcon"></div></div>
+  </div>
+</div>
+<!-- MOCKS TAB -->
+<div class="tab" id="tab-mocks">
+  <div class="card">
+    <div class="ch"><div class="ci2" style="background:rgba(245,158,11,.1)">📝</div><div class="cm"><div class="ct">Mock Test Scores</div><div class="cs">Track every test — aim for 550+</div></div></div>
+    <div class="cb2" style="padding:12px"><div class="mgrid" id="mcon"></div><button class="addbtn" onclick="addMock()">+ Add Mock Test</button></div>
+  </div>
+</div>
+<!-- TIMELINE TAB -->
+<div class="tab" id="tab-timeline">
+  <div class="card">
+    <div class="ch"><div class="ci2" style="background:rgba(236,72,153,.1)">🗓️</div><div class="cm"><div class="ct">Year Phases</div><div class="cs">May 2026 → May 2027</div></div></div>
+    <div class="cb2"><div class="tl" id="tlcon"></div></div>
+  </div>
+</div>
+</div>
+<!-- MODAL -->
+<div class="mov" id="rm"><div class="mbox"><div class="me">🗑️</div><div class="mt2">Delete Mock?</div><div class="ms">This cannot be undone.</div><div class="mbtns"><button class="mb mcan" onclick="closeM()">Cancel</button><button class="mb mcon" onclick="confirmM()">Delete</button></div></div></div>
+<script>
+// Clock & Countdown
+const DA=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const ND=new Date('2027-05-02T10:00:00');
+function tick(){const d=new Date();document.getElementById('clkt').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');document.getElementById('clkd').textContent=DA[d.getDay()]+' '+d.getDate()+' '+MO[d.getMonth()]+' '+d.getFullYear();const di=ND-d;if(di>0){document.getElementById('cdd').textContent=String(Math.floor(di/86400000)).padStart(3,'0');document.getElementById('cdh').textContent=String(Math.floor((di%86400000)/3600000)).padStart(2,'0');document.getElementById('cdm').textContent=String(Math.floor((di%3600000)/60000)).padStart(2,'0');}}
+tick();setInterval(tick,30000);
+// Tab switch
+function sw(id,btn){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');if(id==='overview')upOv();}
+// Chapter data
+const CHS=[
+  {m:'May–Jun 2026',l:'Foundation Begins',bio:['The Living World','Biological Classification','Plant Kingdom','Animal Kingdom'],chem:['Some Basic Concepts','Structure of Atom','Classification of Elements','Chemical Bonding'],phy:['Units & Measurement','Motion in Straight Line','Motion in a Plane','Laws of Motion']},
+  {m:'July 2026',l:'Morphology & Mechanics',bio:['Morphology of Flowering Plants','Anatomy of Flowering Plants','Structural Organisation in Animals'],chem:['States of Matter','Thermodynamics','Equilibrium'],phy:['Work Energy Power','System of Particles','Gravitation']},
+  {m:'August 2026',l:'Cell Biology',bio:['Cell: The Unit of Life','Biomolecules','Cell Cycle & Cell Division'],chem:['Redox Reactions','Hydrogen','s-Block Elements'],phy:['Mechanical Properties of Solids','Mechanical Properties of Fluids','Thermal Properties','Thermodynamics Phy']},
+  {m:'September 2026',l:'Plant Physiology',bio:['Transport in Plants','Mineral Nutrition','Photosynthesis','Respiration in Plants'],chem:['p-Block Elements 11','Organic Chemistry Basics','Hydrocarbons','Environmental Chemistry'],phy:['Kinetic Theory','Oscillations','Waves']},
+  {m:'October 2026',l:'Transition Phase',bio:['Plant Growth and Development','Digestion and Absorption','Breathing and Exchange of Gases'],chem:['Solid State','Solutions','Electrochemistry','Chemical Kinetics'],phy:['Electric Charges and Fields','Electrostatic Potential','Current Electricity']},
+  {m:'November 2026',l:'Human Physiology',bio:['Body Fluids and Circulation','Excretory Products','Locomotion and Movement','Neural Control','Chemical Coordination'],chem:['Surface Chemistry','d and f Block Elements','Coordination Compounds'],phy:['Moving Charges and Magnetism','Magnetism and Matter','Electromagnetic Induction','Alternating Current']},
+  {m:'December 2026',l:'Reproduction',bio:['Reproduction in Organisms','Sexual Reproduction in Plants','Human Reproduction','Reproductive Health'],chem:['Haloalkanes and Haloarenes','Alcohols Phenols Ethers','Aldehydes Ketones Acids'],phy:['Electromagnetic Waves','Ray Optics','Wave Optics']},
+  {m:'January 2027',l:'Genetics and Modern Physics',bio:['Principles of Inheritance','Molecular Basis of Inheritance','Evolution'],chem:['Amines','Biomolecules','Polymers','Chemistry in Everyday Life'],phy:['Dual Nature of Radiation','Atoms','Nuclei','Semiconductors']},
+  {m:'February 2027',l:'Biology Finish',bio:['Human Health and Disease','Microbes in Human Welfare','Biotechnology Principles','Biotechnology Applications'],chem:[],phy:[]},
+  {m:'March 2027',l:'Ecology',bio:['Organisms and Populations','Ecosystem','Biodiversity and Conservation','Environmental Issues'],chem:[],phy:[]},
+  {m:'Apr-May 2027',l:'Revision and Mock Phase',bio:['Bio Revision Round 1','Bio Revision Round 2','NCERT Line by Line','Bio PYQ Marathon'],chem:['Chem Revision Round 1','Chem Revision Round 2','Organic Chem Blitz','Chem PYQ Marathon'],phy:['Physics Revision Round 1','Physics Revision Round 2','Formula Sheet Mastery','Physics PYQ Marathon']}
+];
+const TOT={bio:38,chem:30,phy:29};
+function ck(m,s,c){return('ny_'+m+'_'+s+'_'+c).replace(/[\s\-()&]/g,'_');}
+function isd(m,s,c){return localStorage.getItem(ck(m,s,c))==='1';}
+function togChip(m,s,c,el){if(isd(m,s,c)){localStorage.removeItem(ck(m,s,c));el.classList.remove('done');}else{localStorage.setItem(ck(m,s,c),'1');el.classList.add('done');showT('Chapter done ✓');}upMP(m);upOv();}
+function cntDone(s){let n=0;CHS.forEach(m=>(m[s]||[]).forEach(c=>{if(isd(m.m,s,c))n++;}));return n;}
+function upOv(){
+  const bd=cntDone('bio'),cd=cntDone('chem'),pd=cntDone('phy');
+  const bp=Math.round(bd/TOT.bio*100),cp=Math.round(cd/TOT.chem*100),pp=Math.round(pd/TOT.phy*100),tot=Math.round((bd+cd+pd)/(TOT.bio+TOT.chem+TOT.phy)*100);
+  document.getElementById('ov-bio').textContent=bp+'%';document.getElementById('ov-chem').textContent=cp+'%';document.getElementById('ov-phy').textContent=pp+'%';document.getElementById('ov-tot').textContent=tot+'%';
+  const C=188;
+  document.getElementById('br').style.strokeDashoffset=C-(bp/100)*C;document.getElementById('brp').textContent=bp+'%';document.getElementById('brd').textContent=bd+'/'+TOT.bio;
+  document.getElementById('cr').style.strokeDashoffset=C-(cp/100)*C;document.getElementById('crp').textContent=cp+'%';document.getElementById('crd').textContent=cd+'/'+TOT.chem;
+  document.getElementById('pr').style.strokeDashoffset=C-(pp/100)*C;document.getElementById('prp').textContent=pp+'%';document.getElementById('prd').textContent=pd+'/'+TOT.phy;
+  document.getElementById('bb').style.width=bp+'%';document.getElementById('bbv').textContent=bd+'/'+TOT.bio;
+  document.getElementById('cb').style.width=cp+'%';document.getElementById('cbv').textContent=cd+'/'+TOT.chem;
+  document.getElementById('pb').style.width=pp+'%';document.getElementById('pbv').textContent=pd+'/'+TOT.phy;
+  renderSChart();
+}
+function upMP(month){
+  const m=CHS.find(x=>x.m===month);if(!m)return;
+  const all=[...(m.bio||[]).map(c=>({s:'bio',c})),...(m.chem||[]).map(c=>({s:'chem',c})),...(m.phy||[]).map(c=>({s:'phy',c}))];
+  const done=all.filter(({s,c})=>isd(month,s,c)).length;
+  const pct=all.length?Math.round(done/all.length*100):0;
+  const mid=month.replace(/[\s\-()&]/g,'_');
+  const f=document.getElementById('mpf_'+mid),t=document.getElementById('mpp_'+mid);
+  if(f)f.style.width=pct+'%';if(t)t.textContent=pct+'%';
+}
+function buildCh(){
+  const con=document.getElementById('chcon');
+  CHS.forEach((m,i)=>{
+    const mid=m.m.replace(/[\s\-()&]/g,'_');
+    let chips='';
+    if(m.bio&&m.bio.length){chips+=`<div class="srow"><div class="slbl"><span class="sdot" style="background:var(--bio)"></span><span style="color:var(--bio);font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;">Biology</span></div><div class="chips">`;m.bio.forEach(c=>{chips+=`<div class="chip bc${isd(m.m,'bio',c)?' done':''}" onclick="togChip('${m.m}','bio','${c}',this)"><span class="ckk">✓</span>${c}</div>`;});chips+=`</div></div>`;}
+    if(m.chem&&m.chem.length){chips+=`<div class="srow"><div class="slbl"><span class="sdot" style="background:var(--chem)"></span><span style="color:var(--chem);font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;">Chemistry</span></div><div class="chips">`;m.chem.forEach(c=>{chips+=`<div class="chip cc${isd(m.m,'chem',c)?' done':''}" onclick="togChip('${m.m}','chem','${c}',this)"><span class="ckk">✓</span>${c}</div>`;});chips+=`</div></div>`;}
+    if(m.phy&&m.phy.length){chips+=`<div class="srow"><div class="slbl"><span class="sdot" style="background:var(--phy)"></span><span style="color:var(--phy);font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;">Physics</span></div><div class="chips">`;m.phy.forEach(c=>{chips+=`<div class="chip pc${isd(m.m,'phy',c)?' done':''}" onclick="togChip('${m.m}','phy','${c}',this)"><span class="ckk">✓</span>${c}</div>`;});chips+=`</div></div>`;}
+    const div=document.createElement('div');div.className='macc'+(i===0?' open':'');
+    div.innerHTML=`<div class="mh" onclick="this.parentElement.classList.toggle('open')"><div class="ml2"><span class="mn">${m.m}</span><span class="mname">${m.l}</span></div><div class="mr2"><div class="mpb"><div class="mpbf" id="mpf_${mid}" style="width:0%"></div></div><span class="mpp" id="mpp_${mid}">0%</span><span class="mchev">▼</span></div></div><div class="mbody">${chips}</div>`;
+    con.appendChild(div);upMP(m.m);
+  });
+}
+const GMTHS=['May-Jun 2026','Jul 2026','Aug 2026','Sep 2026','Oct 2026','Nov 2026','Dec 2026','Jan 2027','Feb 2027','Mar 2027','Apr-May 2027'];
+function buildGoals(){
+  const con=document.getElementById('gcon');
+  GMTHS.forEach(month=>{
+    const mk='ny_g_'+month.replace(/[\s\-()&]/g,'_');const sv=JSON.parse(localStorage.getItem(mk)||'{}');
+    const div=document.createElement('div');div.className='gc';
+    div.innerHTML=`<div class="gm">${month}</div><div class="ginps">${[['bio','🧬','rgba(16,185,129,.12)','var(--bio)'],['chem','⚗️','rgba(249,115,22,.12)','var(--chem)'],['phy','⚡','rgba(59,130,246,.12)','var(--phy)']].map(([s,e,bg,col])=>`<div class="giw"><span class="gst" style="background:${bg};color:${col};border:1px solid ${col}40">${e}</span><input class="gi" type="text" placeholder="Set goal..." value="${sv[s]||''}" oninput="saveG('${month}','${s}',this.value)"></div>`).join('')}</div>`;
+    con.appendChild(div);
+  });
+}
+function saveG(m,s,v){const mk='ny_g_'+m.replace(/[\s\-()&]/g,'_');const sv=JSON.parse(localStorage.getItem(mk)||'{}');sv[s]=v;localStorage.setItem(mk,JSON.stringify(sv));}
+function getM(){return JSON.parse(localStorage.getItem('ny_mocks')||'[]');}
+function saveM(a){localStorage.setItem('ny_mocks',JSON.stringify(a));}
+function addMock(){const a=getM();a.push({id:Date.now(),date:'',bio:'',chem:'',phy:''});saveM(a);renderMocks();renderSChart();}
+let pid=null;
+function deleteMock(id){pid=id;document.getElementById('rm').classList.add('show');}
+function confirmM(){if(pid){saveM(getM().filter(m=>m.id!==pid));renderMocks();renderSChart();upOv();}closeM();}
+function closeM(){document.getElementById('rm').classList.remove('show');}
+document.getElementById('rm').addEventListener('click',function(e){if(e.target===this)closeM();});
+function upMF(id,f,v){const a=getM();const m=a.find(x=>x.id===id);if(m)m[f]=f==='date'?v:(parseInt(v)||0);saveM(a);if(f!=='date'){const b=parseInt(m.bio)||0,c2=parseInt(m.chem)||0,p=parseInt(m.phy)||0,t=b+c2+p;const pct=Math.round(t/720*100);const col=t>=600?'#00e5ff':t>=500?'var(--green)':t>=400?'var(--gold)':'var(--pink)';const rank=t>=650?'AIR < 1,000':t>=600?'AIR < 5,000':t>=500?'AIR < 20,000':t>=400?'AIR < 50,000':'Keep pushing!';const tot=document.getElementById('mtot'+id);const bar=document.getElementById('mbar'+id);const val=document.getElementById('mval'+id);const rnk=document.getElementById('mrnk'+id);if(tot){tot.textContent=t||'—';tot.style.color=col;tot.style.borderColor=col+'40';}if(bar){bar.style.width=pct+'%';bar.style.background=col;}if(val){val.textContent=t+'/720 · '+pct+'%';val.style.color=col;}if(rnk)rnk.textContent=rank;renderSChart();upOv();}}
+function buildMC(m,i){
+  const b=parseInt(m.bio)||0,c2=parseInt(m.chem)||0,p=parseInt(m.phy)||0,t=b+c2+p;
+  const pct=Math.round(t/720*100);const col=t>=600?'#00e5ff':t>=500?'var(--green)':t>=400?'var(--gold)':'var(--pink)';
+  const rank=t>=650?'AIR < 1,000':t>=600?'AIR < 5,000':t>=500?'AIR < 20,000':t>=400?'AIR < 50,000':'Keep pushing!';
+  const div=document.createElement('div');div.className='mcard';div.id='mc'+m.id;
+  div.innerHTML=`<div class="mctop"><div class="mcnum">Mock #${i+1}</div><div style="display:flex;gap:8px;align-items:center"><input type="date" class="mdi" value="${m.date||''}" onchange="upMF(${m.id},'date',this.value)"><span onclick="deleteMock(${m.id})" style="cursor:pointer;font-size:14px;color:var(--muted)">🗑️</span></div></div><div class="mscores"><div class="msi"><div class="msil" style="color:var(--bio)">🧬 Bio /360</div><input class="msinp" type="number" min="0" max="360" placeholder="—" value="${m.bio||''}" onblur="upMF(${m.id},'bio',this.value)" style="border-color:rgba(16,185,129,.3)"></div><div class="msi"><div class="msil" style="color:var(--chem)">⚗️ Chem /180</div><input class="msinp" type="number" min="0" max="180" placeholder="—" value="${m.chem||''}" onblur="upMF(${m.id},'chem',this.value)" style="border-color:rgba(249,115,22,.3)"></div><div class="msi"><div class="msil" style="color:var(--phy)">⚡ Phy /180</div><input class="msinp" type="number" min="0" max="180" placeholder="—" value="${m.phy||''}" onblur="upMF(${m.id},'phy',this.value)" style="border-color:rgba(59,130,246,.3)"></div><div class="msi"><div class="msil">📊 Total</div><div class="msinp" id="mtot${m.id}" style="display:flex;align-items:center;justify-content:center;color:${col};background:var(--card);border:1px solid ${col}40;font-family:'Nunito',sans-serif;font-weight:900;font-size:15px;padding:7px 4px;border-radius:8px">${t||'—'}</div></div></div><div class="mtbar"><div class="mtbf" id="mbar${m.id}" style="width:${pct}%;background:${col}"></div></div><div class="mtlbl"><div class="mtv" id="mval${m.id}" style="color:${col}">${t}/720 · ${pct}%</div><div class="mtr" id="mrnk${m.id}">${rank}</div></div>`;
+  return div;
+}
+function renderMocks(){const c=document.getElementById('mcon');c.innerHTML='';getM().forEach((m,i)=>c.appendChild(buildMC(m,i)));}
+function renderSChart(){
+  const mocks=getM().filter(m=>(parseInt(m.bio)||0)+(parseInt(m.chem)||0)+(parseInt(m.phy)||0)>0);
+  const wrap=document.getElementById('schartwrap');
+  if(!mocks.length){wrap.innerHTML='<div class="empty"><div class="eico">📊</div>Add mock scores in the Mocks tab.</div>';return;}
+  wrap.innerHTML=`<div class="schart">${mocks.map((m,i)=>{const t=(parseInt(m.bio)||0)+(parseInt(m.chem)||0)+(parseInt(m.phy)||0);const h=Math.max(4,Math.round(t/720*90));const col=t>=600?'#00e5ff':t>=500?'var(--green)':t>=400?'var(--gold)':'var(--pink)';return`<div class="sbw"><div class="sbv">${t}</div><div class="sb" style="height:${h}px;background:${col}"></div><div class="sbl">M${i+1}</div></div>`;}).join('')}</div><div class="leg"><div class="li"><div class="ld2" style="background:#00e5ff"></div>600+ 🔥</div><div class="li"><div class="ld2" style="background:var(--green)"></div>500–599</div><div class="li"><div class="ld2" style="background:var(--gold)"></div>400–499</div><div class="li"><div class="ld2" style="background:var(--pink)"></div>&lt;400</div></div>`;
+}
+const PHS=[{i:'🌱',t:'Foundation Phase',p:'May 20 – Sep 2026',d:'Build concepts from zero. Attend all lectures. Complete DPPs same day. Never leave a chapter half-done.',s:'current'},{i:'⚡',t:'Acceleration Phase',p:'Oct – Dec 2026',d:'Speed up solving. Start topic-wise tests. Build mistake notebook. 2 full mocks per month.',s:'upcoming'},{i:'🔥',t:'Revision Phase 1',p:'Jan – Feb 2027',d:'Full syllabus revision round 1. Chapter-wise PYQs. 3 full mocks per week minimum.',s:'upcoming'},{i:'💪',t:'Revision Phase 2',p:'Mar – Apr 2027',d:'Daily mocks. Deep error analysis. Only NCERT reading for Bio & Chem. No new topics.',s:'upcoming'},{i:'🎯',t:'Final Sprint',p:'May 1–15, 2027',d:'Light mocks only. Read notes, no new solving. Sleep well, eat well. Stay calm.',s:'upcoming'},{i:'🏆',t:'NEET 2027',p:'~May 2027',d:"All the hard work pays off. Walk in confident. You've prepared for this.",s:'upcoming'}];
+function buildTL(){const con=document.getElementById('tlcon');PHS.forEach((p,i)=>{const div=document.createElement('div');div.className='tli';div.innerHTML=`<div class="tll"><div class="tldot ${p.s}">${p.i}</div>${i<PHS.length-1?'<div class="tlline"></div>':''}</div><div class="tlr"><div class="tlp">${p.p}</div><div class="tlt">${p.t}</div><div class="tld">${p.d}</div></div>`;con.appendChild(div);});}
+let tT;function showT(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),1600);}
+function saveName(v){localStorage.setItem('ny_username',v);}
+// Load saved name
+const saved_name=localStorage.getItem('ny_username');if(saved_name)document.getElementById('uname').value=saved_name;
+buildCh();buildGoals();buildTL();renderMocks();upOv();
+</script>
+</body>
+</html>
