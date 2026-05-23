@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEET PYQ Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Quicksand:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#05070f;--card:#0b0f1c;--card2:#101524;--border:#1a2238;--text:#e8edf8;--muted:#5a6a8a;--faint:#1e2840;--purple:#a855f7;--cyan:#06b6d4;--pink:#ec4899;--gold:#f59e0b;--green:#10b981;--blue:#3b82f6;--orange:#f97316;--bio:#10b981;--chem:#f97316;--phy:#3b82f6;--gp:linear-gradient(135deg,#a855f7,#06b6d4);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Quicksand',sans-serif;min-height:100vh;overflow-x:hidden;}
+.bgc{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.orb{position:absolute;border-radius:50%;filter:blur(100px);animation:of 10s ease-in-out infinite alternate;}
+.o1{width:500px;height:500px;background:rgba(168,85,247,.06);top:-100px;left:-100px;}
+.o2{width:350px;height:350px;background:rgba(6,182,212,.05);bottom:-80px;right:-80px;animation-delay:3s;}
+@keyframes of{from{transform:translate(0,0);}to{transform:translate(30px,20px);}}
+.gl{position:fixed;inset:0;background-image:linear-gradient(rgba(168,85,247,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.02) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;}
+.page{max-width:680px;margin:0 auto;padding:16px 14px 80px;position:relative;z-index:1;}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:18px;}
+.back{text-decoration:none;font-size:18px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--card2);border:1px solid var(--border);border-radius:10px;flex-shrink:0;}
+.hdr-info{flex:1;}
+.hdr-title{font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;background:linear-gradient(135deg,#f59e0b,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hdr-sub{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:.04em;}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:13px 10px;text-align:center;}
+.stat-val{font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;line-height:1;margin-bottom:3px;}
+.stat-lbl{font-size:9px;color:var(--muted);font-weight:600;letter-spacing:.03em;}
+.stat-bar{height:3px;border-radius:100px;margin-top:7px;overflow:hidden;background:var(--border);}
+.stat-bar-fill{height:100%;border-radius:100px;transition:width .5s ease;}
+
+/* LINKS CARD */
+.links-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:14px 16px;margin-bottom:14px;}
+.links-title{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.links-row{display:flex;gap:8px;flex-wrap:wrap;}
+.ext-link{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:10px;text-decoration:none;font-size:11px;font-weight:700;transition:all .2s;border:1px solid;}
+.ext-link:active{transform:scale(.96);}
+.lk1{background:rgba(168,85,247,.08);color:var(--purple);border-color:rgba(168,85,247,.25);}
+.lk2{background:rgba(6,182,212,.08);color:var(--cyan);border-color:rgba(6,182,212,.25);}
+.lk3{background:rgba(249,115,22,.08);color:var(--orange);border-color:rgba(249,115,22,.25);}
+
+/* SUBJECT TABS */
+.stabs{display:flex;gap:6px;margin-bottom:14px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:5px;}
+.stab{flex:1;padding:9px 6px;border:none;background:transparent;color:var(--muted);font-family:'Quicksand',sans-serif;font-size:11px;font-weight:700;border-radius:11px;cursor:pointer;transition:all .2s;}
+.stab.bio.active{background:var(--bio);color:#fff;}
+.stab.chem.active{background:var(--chem);color:#fff;}
+.stab.phy.active{background:var(--phy);color:#fff;}
+
+/* OVERALL PROGRESS */
+.subj-prog{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px 15px;margin-bottom:12px;}
+.sp-top{display:flex;justify-content:space-between;margin-bottom:6px;}
+.sp-label{font-size:12px;font-weight:700;color:var(--text);}
+.sp-val{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);}
+.sp-track{height:7px;background:var(--border);border-radius:100px;overflow:hidden;}
+.sp-fill{height:100%;border-radius:100px;transition:width .5s ease;}
+
+/* CHAPTER CARDS */
+.ch-grid{display:grid;gap:10px;}
+.ch-card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;transition:border-color .2s;}
+.ch-card.strong{border-color:rgba(16,185,129,.35);}
+.ch-card.okay{border-color:rgba(245,158,11,.3);}
+.ch-card.weak{border-color:rgba(239,68,68,.3);}
+
+.ch-top{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;}
+.ch-top:active{background:var(--card2);}
+.ch-num{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);background:var(--faint);padding:2px 7px;border-radius:5px;flex-shrink:0;}
+.ch-name{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;flex:1;}
+.ch-badge{font-size:9px;font-weight:700;padding:3px 8px;border-radius:7px;flex-shrink:0;font-family:'Space Mono',monospace;}
+.badge-strong{background:rgba(16,185,129,.12);color:var(--green);border:1px solid rgba(16,185,129,.25);}
+.badge-okay{background:rgba(245,158,11,.12);color:var(--gold);border:1px solid rgba(245,158,11,.25);}
+.badge-weak{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.25);}
+.badge-none{background:var(--faint);color:var(--muted);border:1px solid var(--border);}
+.ch-arrow{font-size:10px;color:var(--muted);transition:transform .3s;margin-left:2px;}
+.ch-card.open .ch-arrow{transform:rotate(180deg);}
+
+/* CHAPTER BODY */
+.ch-body{display:none;padding:0 14px 14px;border-top:1px solid var(--border);}
+.ch-card.open .ch-body{display:block;}
+
+/* MINI PROGRESS IN CARD */
+.ch-mini-prog{display:flex;align-items:center;gap:8px;padding:10px 0 8px;}
+.ch-mini-label{font-size:10px;color:var(--muted);font-weight:600;width:60px;flex-shrink:0;}
+.ch-mini-track{flex:1;height:5px;background:var(--border);border-radius:100px;overflow:hidden;}
+.ch-mini-fill{height:100%;border-radius:100px;transition:width .4s ease;}
+.ch-mini-val{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);width:36px;text-align:right;flex-shrink:0;}
+
+/* INPUT SECTION */
+.input-section{padding:8px 0;}
+.inp-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.inp-label{font-size:11px;font-weight:700;color:var(--muted);width:80px;flex-shrink:0;}
+.inp-group{display:flex;align-items:center;gap:6px;flex:1;}
+.num-inp{width:56px;background:var(--card2);border:1px solid var(--border);border-radius:9px;padding:7px 8px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:center;outline:none;transition:border .2s;}
+.num-inp:focus{border-color:rgba(168,85,247,.4);}
+.inp-sep{font-size:13px;color:var(--muted);font-weight:700;}
+.inp-hint{font-size:10px;color:var(--muted);}
+
+/* CONFIDENCE BUTTONS */
+.conf-row{display:flex;gap:7px;margin-bottom:12px;}
+.conf-btn{flex:1;padding:9px 6px;border-radius:11px;border:1.5px solid var(--border);background:transparent;font-family:'Quicksand',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;}
+.conf-btn:active{transform:scale(.96);}
+.conf-btn.weak-btn.active{background:rgba(239,68,68,.12);border-color:#ef4444;color:#ef4444;}
+.conf-btn.okay-btn.active{background:rgba(245,158,11,.12);border-color:var(--gold);color:var(--gold);}
+.conf-btn.strong-btn.active{background:rgba(16,185,129,.12);border-color:var(--green);color:var(--green);}
+
+/* DONE TOGGLE */
+.done-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.done-toggle{width:44px;height:24px;background:var(--faint);border-radius:100px;position:relative;cursor:pointer;transition:background .2s;border:1px solid var(--border);flex-shrink:0;}
+.done-toggle.on{background:var(--green);border-color:var(--green);}
+.done-toggle-knob{position:absolute;width:18px;height:18px;background:white;border-radius:50%;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+.done-toggle.on .done-toggle-knob{transform:translateX(20px);}
+.done-label{font-size:12px;font-weight:700;color:var(--text);}
+
+/* NOTES */
+.notes-inp{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:600;color:var(--text);outline:none;resize:none;min-height:50px;transition:border .2s;}
+.notes-inp:focus{border-color:rgba(168,85,247,.4);}
+.notes-inp::placeholder{color:var(--faint);}
+.notes-label{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;}
+
+.tab-content{display:none;}
+.tab-content.active{display:block;animation:fu .3s ease both;}
+@keyframes fu{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gp);color:white;border-radius:100px;padding:9px 20px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;z-index:400;transition:transform .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;box-shadow:0 4px 20px rgba(168,85,247,.4);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none;}
+</style>
+</head>
+<body>
+<div class="bgc"><div class="orb o1"></div><div class="orb o2"></div><div class="gl"></div></div>
+<div class="toast" id="toast">✓ Saved</div>
+<div class="page">
+
+<!-- Header -->
+<div class="hdr">
+  <a href="index.html" class="back">←</a>
+  <div class="hdr-info">
+    <div class="hdr-title">📋 PYQ Tracker</div>
+    <div class="hdr-sub">Track your PYQ practice chapter by chapter</div>
+  </div>
+</div>
+
+<!-- Overall stats -->
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="stat-val" id="st-done" style="background:var(--gp);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">0</div>
+    <div class="stat-lbl">Chapters Done</div>
+    <div class="stat-bar"><div class="stat-bar-fill" id="st-done-bar" style="background:var(--purple);width:0%"></div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-val" id="st-acc" style="color:var(--gold);">0%</div>
+    <div class="stat-lbl">Overall Accuracy</div>
+    <div class="stat-bar"><div class="stat-bar-fill" id="st-acc-bar" style="background:var(--gold);width:0%"></div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-val" id="st-strong" style="color:var(--green);">0</div>
+    <div class="stat-lbl">Strong Chapters</div>
+    <div class="stat-bar"><div class="stat-bar-fill" id="st-strong-bar" style="background:var(--green);width:0%"></div></div>
+  </div>
+</div>
+
+<!-- PYQ Source Links -->
+<div class="links-card">
+  <div class="links-title">🔗 Solve PYQs From</div>
+  <div class="links-row">
+    <a href="https://questions.examside.com/past-years/medical/neet" target="_blank" class="ext-link lk1">⚡ ExamSide</a>
+    <a href="https://www.rankupp.in/neet-pyq" target="_blank" class="ext-link lk2">📊 RankUpp</a>
+    <a href="https://www.esaral.com/neet-ug-previous-year-paper-chapter-wise-with-solutions/" target="_blank" class="ext-link lk3">📚 eSaral</a>
+  </div>
+</div>
+
+<!-- Subject Tabs -->
+<div class="stabs">
+  <button class="stab bio active" onclick="switchSubj('bio',this)">🧬 Biology</button>
+  <button class="stab chem" onclick="switchSubj('chem',this)">⚗️ Chemistry</button>
+  <button class="stab phy" onclick="switchSubj('phy',this)">⚡ Physics</button>
+</div>
+
+<!-- Tab contents -->
+<div class="tab-content active" id="tab-bio"><div id="prog-bio"></div><div class="ch-grid" id="list-bio"></div></div>
+<div class="tab-content" id="tab-chem"><div id="prog-chem"></div><div class="ch-grid" id="list-chem"></div></div>
+<div class="tab-content" id="tab-phy"><div id="prog-phy"></div><div class="ch-grid" id="list-phy"></div></div>
+
+</div>
+
+<script>
+const CHAPTERS = {
+bio:["The Living World","Biological Classification","Plant Kingdom","Animal Kingdom","Morphology of Flowering Plants","Anatomy of Flowering Plants","Structural Organisation in Animals","Cell: The Unit of Life","Biomolecules","Cell Cycle and Cell Division","Transport in Plants","Mineral Nutrition","Photosynthesis in Higher Plants","Respiration in Plants","Plant Growth and Development","Digestion and Absorption","Breathing and Exchange of Gases","Body Fluids and Circulation","Excretory Products and their Elimination","Locomotion and Movement","Neural Control and Coordination","Chemical Coordination and Integration","Reproduction in Organisms","Sexual Reproduction in Flowering Plants","Human Reproduction","Reproductive Health","Principles of Inheritance and Variation","Molecular Basis of Inheritance","Evolution","Human Health and Disease","Microbes in Human Welfare","Biotechnology: Principles and Processes","Biotechnology and its Applications","Organisms and Populations","Ecosystem","Biodiversity and Conservation","Environmental Issues","Structural Organisation in Animals"],
+chem:["Some Basic Concepts","Structure of Atom","Classification of Elements","Chemical Bonding","States of Matter","Thermodynamics","Equilibrium","Redox Reactions","Hydrogen","s-Block Elements","p-Block Elements (11)","Organic Chemistry Basics","Hydrocarbons","Environmental Chemistry","Solid State","Solutions","Electrochemistry","Chemical Kinetics","Surface Chemistry","d and f Block Elements","Coordination Compounds","Haloalkanes and Haloarenes","Alcohols Phenols and Ethers","Aldehydes Ketones and Carboxylic Acids","Amines","Biomolecules","Polymers","Chemistry in Everyday Life","p-Block Elements (12)","General Principles of Extraction"],
+phy:["Units and Measurement","Motion in a Straight Line","Motion in a Plane","Laws of Motion","Work Energy and Power","System of Particles and Rotational Motion","Gravitation","Mechanical Properties of Solids","Mechanical Properties of Fluids","Thermal Properties of Matter","Thermodynamics","Kinetic Theory","Oscillations","Waves","Electric Charges and Fields","Electrostatic Potential and Capacitance","Current Electricity","Moving Charges and Magnetism","Magnetism and Matter","Electromagnetic Induction","Alternating Current","Electromagnetic Waves","Ray Optics and Optical Instruments","Wave Optics","Dual Nature of Radiation and Matter","Atoms","Nuclei","Semiconductor Electronics","Communication Systems"]
+};
+
+const TOTALS = {bio:38,chem:30,phy:29};
+let curSubj = 'bio';
+
+// Data key for each chapter
+function dk(s,i,field){return `pyq_${s}_${i}_${field}`;}
+function getD(s,i,field,def){const v=localStorage.getItem(dk(s,i,field));return v===null?def:v;}
+function setD(s,i,field,val){localStorage.setItem(dk(s,i,field),val);}
+
+function switchSubj(s,btn){
+  curSubj=s;
+  document.querySelectorAll('.stab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+s).classList.add('active');
+  updateSubjProg(s);
+}
+
+function toggleCard(s,i){
+  const card=document.getElementById(`ch_${s}_${i}`);
+  const open=card.classList.contains('open');
+  document.querySelectorAll(`#list-${s} .ch-card`).forEach(c=>c.classList.remove('open'));
+  if(!open)card.classList.add('open');
+}
+
+function toggleDone(s,i){
+  const cur=getD(s,i,'done','0');
+  const newVal=cur==='1'?'0':'1';
+  setD(s,i,'done',newVal);
+  const tog=document.getElementById(`tog_${s}_${i}`);
+  if(tog){tog.classList.toggle('on',newVal==='1');}
+  updateCard(s,i);
+  updateSubjProg(s);
+  updateOverallStats();
+  showToast(newVal==='1'?'Chapter marked done ✓':'Unmarked');
+}
+
+function setConf(s,i,val){
+  setD(s,i,'conf',val);
+  // update buttons
+  ['weak','okay','strong'].forEach(c=>{
+    const btn=document.getElementById(`conf_${s}_${i}_${c}`);
+    if(btn)btn.classList.toggle('active',c===val);
+  });
+  updateCard(s,i);
+  updateSubjProg(s);
+  updateOverallStats();
+  showToast('Confidence saved ✓');
+}
+
+function saveScores(s,i){
+  const got=document.getElementById(`got_${s}_${i}`);
+  const tot=document.getElementById(`tot_${s}_${i}`);
+  if(got&&tot){
+    setD(s,i,'got',got.value||'0');
+    setD(s,i,'tot',tot.value||'0');
+    updateCard(s,i);
+    updateSubjProg(s);
+    updateOverallStats();
+    showToast('Score saved ✓');
+  }
+}
+
+function saveNotes(s,i,val){
+  setD(s,i,'notes',val);
+}
+
+function updateCard(s,i){
+  const card=document.getElementById(`ch_${s}_${i}`);
+  if(!card)return;
+  const done=getD(s,i,'done','0')==='1';
+  const conf=getD(s,i,'conf','');
+  const got=parseInt(getD(s,i,'got','0'))||0;
+  const tot=parseInt(getD(s,i,'tot','0'))||0;
+  const acc=tot>0?Math.round(got/tot*100):0;
+
+  // card border color
+  card.classList.remove('strong','okay','weak');
+  if(conf==='strong')card.classList.add('strong');
+  else if(conf==='okay')card.classList.add('okay');
+  else if(conf==='weak')card.classList.add('weak');
+
+  // badge
+  const badge=document.getElementById(`badge_${s}_${i}`);
+  if(badge){
+    if(!done&&!conf){badge.textContent='Not started';badge.className='ch-badge badge-none';}
+    else if(conf==='strong'){badge.textContent='💪 Strong';badge.className='ch-badge badge-strong';}
+    else if(conf==='okay'){badge.textContent='😊 Okay';badge.className='ch-badge badge-okay';}
+    else if(conf==='weak'){badge.textContent='😤 Weak';badge.className='ch-badge badge-weak';}
+    else if(done){badge.textContent='✓ Done';badge.className='ch-badge badge-strong';}
+  }
+
+  // mini progress bar
+  const fill=document.getElementById(`accfill_${s}_${i}`);
+  const valEl=document.getElementById(`accval_${s}_${i}`);
+  if(fill){fill.style.width=acc+'%';fill.style.background=acc>=70?'var(--green)':acc>=40?'var(--gold)':'#ef4444';}
+  if(valEl)valEl.textContent=tot>0?`${got}/${tot}`:'-';
+}
+
+function updateSubjProg(s){
+  const chs=CHAPTERS[s];
+  let done=0,strong=0,okay=0,weak=0;
+  chs.forEach((_,i)=>{
+    if(getD(s,i,'done','0')==='1')done++;
+    const c=getD(s,i,'conf','');
+    if(c==='strong')strong++;
+    else if(c==='okay')okay++;
+    else if(c==='weak')weak++;
+  });
+  const pct=Math.round(done/chs.length*100);
+  const colors={bio:'var(--bio)',chem:'var(--chem)',phy:'var(--phy)'};
+  const labels={bio:'Biology',chem:'Chemistry',phy:'Physics'};
+  const prog=document.getElementById(`prog-${s}`);
+  if(prog){
+    prog.innerHTML=`<div class="subj-prog">
+      <div class="sp-top"><div class="sp-label">${labels[s]} Progress</div><div class="sp-val">${done}/${chs.length} done · 💪${strong} 😊${okay} 😤${weak}</div></div>
+      <div class="sp-track"><div class="sp-fill" style="width:${pct}%;background:${colors[s]}"></div></div>
+    </div>`;
+  }
+}
+
+function updateOverallStats(){
+  let totalDone=0,totalGot=0,totalTot=0,totalStrong=0,totalChs=0;
+  ['bio','chem','phy'].forEach(s=>{
+    CHAPTERS[s].forEach((_,i)=>{
+      totalChs++;
+      if(getD(s,i,'done','0')==='1')totalDone++;
+      if(getD(s,i,'conf','')==='strong')totalStrong++;
+      const g=parseInt(getD(s,i,'got','0'))||0;
+      const t=parseInt(getD(s,i,'tot','0'))||0;
+      totalGot+=g;totalTot+=t;
+    });
+  });
+  const acc=totalTot>0?Math.round(totalGot/totalTot*100):0;
+  const donePct=Math.round(totalDone/totalChs*100);
+  const strongPct=Math.round(totalStrong/totalChs*100);
+  document.getElementById('st-done').textContent=totalDone;
+  document.getElementById('st-done-bar').style.width=donePct+'%';
+  document.getElementById('st-acc').textContent=acc+'%';
+  document.getElementById('st-acc-bar').style.width=acc+'%';
+  document.getElementById('st-strong').textContent=totalStrong;
+  document.getElementById('st-strong-bar').style.width=strongPct+'%';
+}
+
+function buildList(s){
+  const list=document.getElementById('list-'+s);
+  const colors={bio:'var(--bio)',chem:'var(--chem)',phy:'var(--phy)'};
+  CHAPTERS[s].forEach((ch,i)=>{
+    const done=getD(s,i,'done','0')==='1';
+    const conf=getD(s,i,'conf','');
+    const got=getD(s,i,'got','0');
+    const tot=getD(s,i,'tot','0');
+    const notes=getD(s,i,'notes','');
+    const acc=parseInt(tot)>0?Math.round(parseInt(got)/parseInt(tot)*100):0;
+    let badgeText='Not started',badgeCls='badge-none';
+    if(conf==='strong'){badgeText='💪 Strong';badgeCls='badge-strong';}
+    else if(conf==='okay'){badgeText='😊 Okay';badgeCls='badge-okay';}
+    else if(conf==='weak'){badgeText='😤 Weak';badgeCls='badge-weak';}
+    else if(done){badgeText='✓ Done';badgeCls='badge-strong';}
+    let cardCls='ch-card';
+    if(conf==='strong')cardCls+=' strong';
+    else if(conf==='okay')cardCls+=' okay';
+    else if(conf==='weak')cardCls+=' weak';
+
+    const div=document.createElement('div');
+    div.className=cardCls;
+    div.id=`ch_${s}_${i}`;
+    div.innerHTML=`
+      <div class="ch-top" onclick="toggleCard('${s}',${i})">
+        <span class="ch-num">${String(i+1).padStart(2,'0')}</span>
+        <span class="ch-name" style="color:${colors[s]}">${ch}</span>
+        <span class="ch-badge ${badgeCls}" id="badge_${s}_${i}">${badgeText}</span>
+        <span class="ch-arrow">▼</span>
+      </div>
+      <div class="ch-body">
+        <!-- Done toggle -->
+        <div class="done-row" style="padding-top:12px;">
+          <div class="done-toggle ${done?'on':''}" id="tog_${s}_${i}" onclick="toggleDone('${s}',${i})">
+            <div class="done-toggle-knob"></div>
+          </div>
+          <div class="done-label">PYQs Attempted for this chapter</div>
+        </div>
+
+        <!-- Score inputs -->
+        <div class="inp-row">
+          <div class="inp-label">Score</div>
+          <div class="inp-group">
+            <input class="num-inp" id="got_${s}_${i}" type="number" min="0" placeholder="Got" value="${got!=='0'?got:''}" onblur="saveScores('${s}',${i})">
+            <span class="inp-sep">/</span>
+            <input class="num-inp" id="tot_${s}_${i}" type="number" min="0" placeholder="Total" value="${tot!=='0'?tot:''}" onblur="saveScores('${s}',${i})">
+            <span class="inp-hint">questions correct</span>
+          </div>
+        </div>
+
+        <!-- Accuracy mini bar -->
+        <div class="ch-mini-prog">
+          <div class="ch-mini-label">Accuracy</div>
+          <div class="ch-mini-track"><div class="ch-mini-fill" id="accfill_${s}_${i}" style="width:${acc}%;background:${acc>=70?'var(--green)':acc>=40?'var(--gold)':'#ef4444'}"></div></div>
+          <div class="ch-mini-val" id="accval_${s}_${i}">${parseInt(tot)>0?got+'/'+tot:'-'}</div>
+        </div>
+
+        <!-- Confidence -->
+        <div class="conf-row">
+          <button class="conf-btn weak-btn ${conf==='weak'?'active':''}" id="conf_${s}_${i}_weak" onclick="setConf('${s}',${i},'weak')">😤 Weak</button>
+          <button class="conf-btn okay-btn ${conf==='okay'?'active':''}" id="conf_${s}_${i}_okay" onclick="setConf('${s}',${i},'okay')">😊 Okay</button>
+          <button class="conf-btn strong-btn ${conf==='strong'?'active':''}" id="conf_${s}_${i}_strong" onclick="setConf('${s}',${i},'strong')">💪 Strong</button>
+        </div>
+
+        <!-- Notes -->
+        <div class="notes-label">Notes / Weak areas</div>
+        <textarea class="notes-inp" id="notes_${s}_${i}" placeholder="e.g. Confused about Krebs cycle steps, need to revise..." onblur="saveNotes('${s}',${i},this.value)">${notes}</textarea>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+let toastT;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),1600);}
+
+// Init
+buildList('bio');buildList('chem');buildList('phy');
+updateSubjProg('bio');updateSubjProg('chem');updateSubjProg('phy');
+updateOverallStats();
+</script>
+</body>
+</html>
